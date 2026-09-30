@@ -1,0 +1,36 @@
+{
+    "highscore_filename": "highscores.json",
+    "level": [
+        {
+            "level_number": 1,
+            "level_name": "Level 1",
+            "level_description": "This is the first level of the game.",
+            "level_difficulty": "Easy",
+            "width": 800,
+            "height": 600
+        },
+        {
+            "level_number": 2,
+            "level_name": "Level 2",
+            "level_description": "This is the second level of the game.",
+            "level_difficulty": "Medium",
+            "width": 800,
+            "height": 600
+        },
+        {
+            "level_number": 3,
+            "level_name": "Level 3",
+            "level_description": "This is the third level of the game.",
+            "level_difficulty": "Hard",
+            "width": 800,
+            "height": 600
+        }
+    ],
+    "lives": 3,
+    "pacgum": 42,
+    "points_per_pacgum": 10,
+    "points_per_super_pacgum": 50,
+    "points_per_ghost": 200,
+    "seed": 42,
+    "level_max_time": 90
+}
