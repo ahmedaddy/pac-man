@@ -1,7 +1,7 @@
 import sys
 from .utils import Utils
 from mazegenerator import MazeGenerator
-from .game import Game
+from .game import GameEngine
 
 
 class Main:
@@ -17,7 +17,7 @@ class Main:
             seed=file.get('seed', 42)
             )
         Maze.generate(int(file.get('seed', 42)))
-        game = Game(Maze.maze)
+        game = GameEngine(Maze.maze)
         game.gameLoop()
         print(f"Processing file: {file.get('seed', 42)}")
         print(f"Generated maze: {Maze.maze}")

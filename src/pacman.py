@@ -27,7 +27,7 @@ class Pacman:
 
     def can_move(self, direction):
         row, col, cell = self.get_current_cell()
-        print(cell.up, cell.right, cell.down, cell.left)
+        # print(cell.up, cell.right, cell.down, cell.left)
         if direction == config.UP:
             return row > 0 and not cell.up
         if direction == config.DOWN:

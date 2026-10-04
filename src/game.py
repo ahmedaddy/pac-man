@@ -2,7 +2,7 @@ import pygame
 
 from .config import config
 from .pacman import Pacman
-
+from .main_menu import Mainmenu
 
 class Cell:
     def __init__(self, value):
@@ -12,30 +12,29 @@ class Cell:
         self.left = bool(value & 8)
 
 
-class Game:
+class GameEngine:
     def __init__(self, map_data):
         """Initialize the game."""
         pygame.init()
-
         pygame.display.set_caption("PAC MAN")
-
         self.clock = pygame.time.Clock()
-
         self.map = [
             [Cell(cell) for cell in row]
             for row in map_data
         ]
         map_width = len(self.map[0]) * config.CELL_SIZE
         map_height = len(self.map) * config.CELL_SIZE
-        self.screen = pygame.display.set_mode((map_width, map_height))
-
+        self.screen = pygame.display.set_mode((800, 600))
         self.pacman = Pacman(
             1,
             1,
             self.map
         )
-
         self.running = True
+        self.state = "menu"
+        self.menu = Mainmenu(self.screen)
+
+
     def exit(self):
         """Stop the game."""
         self.running = False
@@ -44,32 +43,57 @@ class Game:
         """Run the main game loop."""
 
         while self.running:
-            self.handleEvents()
-            self.pacman.move()
-            self.screen.fill("#001219")
-            self.draw_walls()
-            self.drawPacman()
+            if self.state == "menu":
+                self.menu.draw()
+            elif self.state == "game":
+                self.pacman.move()
+                self.screen.fill("#001219")
+                self.draw_walls()
+                self.drawPacman()
             pygame.display.flip()
             self.clock.tick(60)
+            self.handleEvents()
 
         pygame.quit()
 
     def handleEvents(self):
         """Handle keyboard and window events."""
         for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    self.exit()
+
             if event.type == pygame.QUIT:
                 self.exit()
-            elif event.type == pygame.KEYDOWN:
-                directions = {
-                    pygame.K_UP: config.UP,
-                    pygame.K_DOWN: config.DOWN,
-                    pygame.K_LEFT: config.LEFT,
-                    pygame.K_RIGHT: config.RIGHT,
-                }
-                if event.key in directions:
-                    self.pacman.set_direction(directions[event.key])
-                elif event.key == pygame.K_q:
-                    self.exit()
+            if self.state == "game":
+                self.handle_game_event(event)
+            elif self.state == "menu":
+                res = self.menu.handle_menu_event(event)
+                if res == "game":
+                    self.state = "game"
+
+            # elif event.type == pygame.KEYDOWN:
+            #     directions = {
+            #         pygame.K_UP: config.UP,
+            #         pygame.K_DOWN: config.DOWN,
+            #         pygame.K_LEFT: config.LEFT,
+            #         pygame.K_RIGHT: config.RIGHT,
+            #     }
+            #     if event.key in directions:
+            #         self.pacman.set_direction(directions[event.key])
+            #     if event.key == pygame.K_q:
+            #         self.exit()
+
+    def handle_game_event(self, event):
+        if event.type == pygame.KEYDOWN:
+            directions = {
+                pygame.K_UP: config.UP,
+                pygame.K_DOWN: config.DOWN,
+                pygame.K_LEFT: config.LEFT,
+                pygame.K_RIGHT: config.RIGHT,
+            }
+            if event.key in directions:
+                self.pacman.set_direction(directions[event.key])
 
     def draw_walls(self):
         """Draw the maze walls."""
