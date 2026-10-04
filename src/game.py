@@ -71,6 +71,8 @@ class GameEngine:
                 res = self.menu.handle_menu_event(event)
                 if res == "game":
                     self.state = "game"
+                if res == "quit":
+                    self.running = False
 
             # elif event.type == pygame.KEYDOWN:
             #     directions = {
