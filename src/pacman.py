@@ -7,7 +7,7 @@ class Pacman:
         self.y = row * config.CELL_SIZE
         self.map = map_data
 
-        self.speed = 2
+        self.speed = 7
         self.direction = None
         self.desired_direction = None
 
@@ -49,13 +49,30 @@ class Pacman:
             elif (self.direction is not None
                     and not self.can_move(self.direction)):
                 self.direction = None
+        if self.direction == None:
+            return
         # print(self.direction, self.can_move(self.direction))
         # print(self.direction, self.can_move(self.direction))
         if self.direction == config.UP:
-            self.y -= self.speed
+            dist_to_center = self.y % config.CELL_SIZE
+            if dist_to_center == 0:
+                dist_to_center = config.CELL_SIZE
+            self.y -= min(self.speed, dist_to_center)
+
         elif self.direction == config.DOWN:
-            self.y += self.speed
+            dist_to_center = config.CELL_SIZE - (self.y % config.CELL_SIZE)
+            if self.y % config.CELL_SIZE == 0:
+                dist_to_center = config.CELL_SIZE
+            self.y += min(self.speed, dist_to_center)
+
         elif self.direction == config.LEFT:
-            self.x -= self.speed
+            dist_to_center = self.x % config.CELL_SIZE
+            if dist_to_center == 0:
+                dist_to_center = config.CELL_SIZE
+            self.x -= min(self.speed, dist_to_center)
+
         elif self.direction == config.RIGHT:
-            self.x += self.speed
+            dist_to_center = config.CELL_SIZE - (self.x % config.CELL_SIZE)
+            if self.x % config.CELL_SIZE == 0:
+                dist_to_center = config.CELL_SIZE
+            self.x += min(self.speed, dist_to_center)
