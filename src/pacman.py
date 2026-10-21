@@ -7,7 +7,7 @@ class Pacman:
         self.y = row * config.CELL_SIZE
         self.map = map_data
 
-        self.speed = 7
+        self.speed = 3
         self.direction = None
         self.desired_direction = None
 
@@ -51,8 +51,6 @@ class Pacman:
                 self.direction = None
         if self.direction == None:
             return
-        # print(self.direction, self.can_move(self.direction))
-        # print(self.direction, self.can_move(self.direction))
         if self.direction == config.UP:
             dist_to_center = self.y % config.CELL_SIZE
             if dist_to_center == 0:

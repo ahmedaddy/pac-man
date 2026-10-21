@@ -12,3 +12,6 @@ class config:
     RIGHT = "RIGHT"
     UP = "UP"
     DOWN = "DOWN"
+    WIDTH = 1080
+    HEIGHT = 720
+    BALL_SIZE = 10

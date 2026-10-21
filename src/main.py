@@ -14,9 +14,9 @@ class Main:
             perfect=False,
             entry_cell=(10, 10),
             exit_cell=(-1, -1),
-            seed=file.get('seed', 42)
+            seed=999
             )
-        Maze.generate(int(file.get('seed', 42)))
+        Maze.generate(999)
         game = GameEngine(Maze.maze)
         game.gameLoop()
         print(f"Processing file: {file.get('seed', 42)}")

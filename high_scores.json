@@ -1,0 +1,22 @@
+{
+    "scores": [
+        {
+            "player_name": "Player1",
+            "high_score": 1000
+        },
+        {
+            "player_name": "Player2",
+            "high_score": 2000
+        }
+        ,
+        {
+            "player_name": "Player3",
+            "high_score": 1500
+        }
+        ,
+        {
+            "player_name": "Player4",
+            "high_score": 2500
+        }
+    ]
+}

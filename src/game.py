@@ -3,6 +3,8 @@ import pygame
 from .config import config
 from .pacman import Pacman
 from .main_menu import Mainmenu
+import random
+
 
 class Cell:
     def __init__(self, value):
@@ -10,6 +12,18 @@ class Cell:
         self.right = bool(value & 2)
         self.down = bool(value & 4)
         self.left = bool(value & 8)
+
+
+class Pacgum:
+    def __init__(self, x, y, score=10):
+        self.x = x
+        self.y = y
+        self.score = score
+        self.is_eaten = False
+
+    def draw(self, screen):
+        if not self.is_eaten:
+            pygame.draw.circle(screen, config.ORANGE, (self.x, self.y), 5)
 
 
 class GameEngine:
@@ -22,18 +36,17 @@ class GameEngine:
             [Cell(cell) for cell in row]
             for row in map_data
         ]
-        map_width = len(self.map[0]) * config.CELL_SIZE
-        map_height = len(self.map) * config.CELL_SIZE
-        self.screen = pygame.display.set_mode((800, 600))
+        self.screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
+        # spawn pacman at the center of the maze
         self.pacman = Pacman(
-            1,
-            1,
+            len(self.map) // 2,
+            len(self.map[0]) // 2,
             self.map
         )
         self.running = True
         self.state = "menu"
         self.menu = Mainmenu(self.screen)
-
+        self.gums = self.generate_pacgums()
 
     def exit(self):
         """Stop the game."""
@@ -48,6 +61,8 @@ class GameEngine:
             elif self.state == "game":
                 self.pacman.move()
                 self.screen.fill("#001219")
+                for gum in self.gums:
+                    gum.draw(screen=self.screen)
                 self.draw_walls()
                 self.drawPacman()
             pygame.display.flip()
@@ -145,5 +160,21 @@ class GameEngine:
             self.screen,
             config.YELLOW,
             (center_x, center_y),
-            10
+            config.BALL_SIZE
         )
+
+    def generate_pacgums(self):
+        pac_gums = []
+        for row, c in enumerate(self.map):
+            for col, i in enumerate(c):
+                if not all([i.up, i.down, i.left, i.right]):
+                    chosen_number = random.choices(
+                        [0, 1],
+                        weights=[0.4, 0.6])[0]
+                    if chosen_number:
+                        gum_x = (col * config.CELL_SIZE) + config.CELL_SIZE // 2
+                        gum_y = (row * config.CELL_SIZE) + config.CELL_SIZE // 2
+                        pac_gums.append(Pacgum(gum_x, gum_y, 10))
+        return pac_gums
+
+    # def check_pacgum_collision(self):
