@@ -23,7 +23,7 @@ class Pacgum:
 
     def draw(self, screen):
         if not self.is_eaten:
-            pygame.draw.circle(screen, config.ORANGE, (self.x, self.y), 5)
+            pygame.draw.circle(screen, config.ORANGE, (self.x, self.y), config.GUM_SIZE)
 
 
 class GameEngine:
@@ -63,6 +63,7 @@ class GameEngine:
                 self.screen.fill("#001219")
                 for gum in self.gums:
                     gum.draw(screen=self.screen)
+                self.handle_gums()
                 self.draw_walls()
                 self.drawPacman()
             pygame.display.flip()
@@ -170,11 +171,32 @@ class GameEngine:
                 if not all([i.up, i.down, i.left, i.right]):
                     chosen_number = random.choices(
                         [0, 1],
-                        weights=[0.4, 0.6])[0]
+                        weights=[0.8, 0.2])[0]
                     if chosen_number:
                         gum_x = (col * config.CELL_SIZE) + config.CELL_SIZE // 2
                         gum_y = (row * config.CELL_SIZE) + config.CELL_SIZE // 2
                         pac_gums.append(Pacgum(gum_x, gum_y, 10))
         return pac_gums
 
-    # def check_pacgum_collision(self):
+    def handle_gums(self):
+        all_done = 0
+        for gum in self.gums:
+            if not gum.is_eaten:
+                all_done += 1
+                pac_man_rect = pygame.Rect(
+                    self.pacman.x,
+                    self.pacman.y,
+                    config.CELL_SIZE,
+                    config.CELL_SIZE
+                )
+                gum_rect = pygame.Rect(
+                    gum.x - config.GUM_SIZE,
+                    gum.y - config.GUM_SIZE,
+                    config.GUM_SIZE,
+                    config.GUM_SIZE
+                )
+                if gum_rect.colliderect(pac_man_rect):
+                    gum.is_eaten = True
+                    self.pacman.score += 10
+        if all_done == 0:
+            print("FINISH")

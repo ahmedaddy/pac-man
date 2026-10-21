@@ -15,3 +15,4 @@ class config:
     WIDTH = 1080
     HEIGHT = 720
     BALL_SIZE = 10
+    GUM_SIZE = 5
