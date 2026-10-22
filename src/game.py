@@ -15,15 +15,16 @@ class Cell:
 
 
 class Pacgum:
-    def __init__(self, x, y, score=10):
+    def __init__(self, x, y, size, score=10):
         self.x = x
         self.y = y
         self.score = score
         self.is_eaten = False
+        self.size = size
 
     def draw(self, screen):
         if not self.is_eaten:
-            pygame.draw.circle(screen, config.ORANGE, (self.x, self.y), config.GUM_SIZE)
+            pygame.draw.circle(screen, config.ORANGE, (self.x, self.y), self.size)
 
 
 class GameEngine:
@@ -47,6 +48,8 @@ class GameEngine:
         self.state = "menu"
         self.menu = Mainmenu(self.screen)
         self.gums = self.generate_pacgums()
+        self.super_gums = self.generate_supergums()
+        self.gums_state = False
 
     def exit(self):
         """Stop the game."""
@@ -61,7 +64,10 @@ class GameEngine:
             elif self.state == "game":
                 self.pacman.move()
                 self.screen.fill("#001219")
-                for gum in self.gums:
+                if not self.gums_state:
+                    for gum in self.gums:
+                        gum.draw(screen=self.screen)
+                for gum in self.super_gums:
                     gum.draw(screen=self.screen)
                 self.handle_gums()
                 self.draw_walls()
@@ -175,8 +181,14 @@ class GameEngine:
                     if chosen_number:
                         gum_x = (col * config.CELL_SIZE) + config.CELL_SIZE // 2
                         gum_y = (row * config.CELL_SIZE) + config.CELL_SIZE // 2
-                        pac_gums.append(Pacgum(gum_x, gum_y, 10))
+                        pac_gums.append(Pacgum(gum_x, gum_y, config.GUM_SIZE, 10))
         return pac_gums
+    
+    def generate_supergums(self):
+        super_pacgums = []
+        super_pacgums.append(Pacgum(16,16, config.SUPER_GUM_SIZE, 50))
+        return super_pacgums
+        
 
     def handle_gums(self):
         all_done = 0
@@ -199,4 +211,4 @@ class GameEngine:
                     gum.is_eaten = True
                     self.pacman.score += 10
         if all_done == 0:
-            print("FINISH")
+            self.gums_state = True
