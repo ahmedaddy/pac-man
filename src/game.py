@@ -2,6 +2,7 @@ import pygame
 
 from .config import config
 from .pacman import Pacman
+from .components import Button
 from .main_menu import Mainmenu
 import random
 
@@ -22,9 +23,9 @@ class Pacgum:
         self.is_eaten = False
         self.size = size
 
-    def draw(self, screen):
+    def draw(self, screen, offset_x, offset_y):
         if not self.is_eaten:
-            pygame.draw.circle(screen, config.ORANGE, (self.x, self.y), self.size)
+            pygame.draw.circle(screen, config.ORANGE, (self.x + offset_x, self.y + offset_y), self.size)
 
 
 class GameEngine:
@@ -36,6 +37,16 @@ class GameEngine:
         self.map = [
             [Cell(cell) for cell in row]
             for row in map_data
+        ]
+        self.maze_width = len(self.map[0]) * config.CELL_SIZE
+        self.maze_height = len(self.map) * config.CELL_SIZE
+        self.offset_x = (config.WIDTH - self.maze_width) // 2
+        self.offset_y = (config.HEIGHT - self.maze_height) // 2
+        self.corners = [
+            self.corrdinates_to_pixels(0, 0),
+            self.corrdinates_to_pixels(0, len(self.map[0]) - 1),
+            self.corrdinates_to_pixels(len(self.map) - 1, 0),
+            self.corrdinates_to_pixels(len(self.map) - 1, len(self.map[0]) - 1)
         ]
         self.screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
         # spawn pacman at the center of the maze
@@ -50,6 +61,8 @@ class GameEngine:
         self.gums = self.generate_pacgums()
         self.super_gums = self.generate_supergums()
         self.gums_state = False
+
+
 
     def exit(self):
         """Stop the game."""
@@ -66,9 +79,11 @@ class GameEngine:
                 self.screen.fill("#001219")
                 if not self.gums_state:
                     for gum in self.gums:
-                        gum.draw(screen=self.screen)
+                        gum.draw(screen=self.screen, offset_x=self.offset_x, offset_y=self.offset_y)
                 for gum in self.super_gums:
-                    gum.draw(screen=self.screen)
+                    gum.draw(screen=self.screen, offset_x=self.offset_x, offset_y=self.offset_y)
+                for info in self.infos():
+                    info.draw(screen=self.screen)
                 self.handle_gums()
                 self.draw_walls()
                 self.drawPacman()
@@ -118,13 +133,18 @@ class GameEngine:
             }
             if event.key in directions:
                 self.pacman.set_direction(directions[event.key])
+    
+    def corrdinates_to_pixels(self, x, y):
+        ret_x = (x * config.CELL_SIZE) + config.CELL_SIZE // 2
+        ret_y = (y * config.CELL_SIZE) + config.CELL_SIZE // 2
+        return ret_x, ret_y
 
     def draw_walls(self):
         """Draw the maze walls."""
         for row, cells in enumerate(self.map):
             for col, cell in enumerate(cells):
-                x = col * config.CELL_SIZE
-                y = row * config.CELL_SIZE
+                x = self.offset_x + col * config.CELL_SIZE
+                y = self.offset_y + row * config.CELL_SIZE
                 if cell.up:
                     pygame.draw.line(
                         self.screen,
@@ -160,8 +180,8 @@ class GameEngine:
                     )
 
     def drawPacman(self):
-        center_x = self.pacman.x + config.CELL_SIZE // 2
-        center_y = self.pacman.y + config.CELL_SIZE // 2
+        center_x = self.offset_x + self.pacman.x + config.CELL_SIZE // 2
+        center_y = self.offset_y + self.pacman.y + config.CELL_SIZE // 2
 
         pygame.draw.circle(
             self.screen,
@@ -170,14 +190,22 @@ class GameEngine:
             config.BALL_SIZE
         )
 
+    def infos(self):
+        infos = []
+        score = Button(config.WIDTH // 2, 0, 40, 20, f"Score: {self.pacman.score}", "black", "black", "white")
+        infos.append(score)
+        return infos
+
     def generate_pacgums(self):
         pac_gums = []
         for row, c in enumerate(self.map):
             for col, i in enumerate(c):
+                if self.corrdinates_to_pixels(col, row) in self.corners:
+                    continue
                 if not all([i.up, i.down, i.left, i.right]):
                     chosen_number = random.choices(
                         [0, 1],
-                        weights=[0.8, 0.2])[0]
+                        weights=[0, 1.0])[0]
                     if chosen_number:
                         gum_x = (col * config.CELL_SIZE) + config.CELL_SIZE // 2
                         gum_y = (row * config.CELL_SIZE) + config.CELL_SIZE // 2
@@ -186,7 +214,8 @@ class GameEngine:
     
     def generate_supergums(self):
         super_pacgums = []
-        super_pacgums.append(Pacgum(16,16, config.SUPER_GUM_SIZE, 50))
+        for corner in self.corners:
+            super_pacgums.append(Pacgum(corner[0], corner[1], config.SUPER_GUM_SIZE, 50))
         return super_pacgums
         
 
