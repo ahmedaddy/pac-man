@@ -1,3 +1,5 @@
+import pygame
+
 from .config import config
 from abc import abstractmethod, ABC
 
@@ -32,6 +34,11 @@ class Player(ABC):
     def move(self):
         pass
 
+    @abstractmethod
+    def draw(self):
+        pass
+
+
 class Pacman(Player):
     def __init__(self, row, col, map_data):
         super().__init__(row, col, map_data)
@@ -61,6 +68,9 @@ class Pacman(Player):
         if direction == config.RIGHT:
             return col < len(self.map[0]) - 1 and not cell.right
         return False
+
+    def set_direction(self, direction):
+        self.desired_direction = direction
 
     def move(self):
         if self.is_aligned():
@@ -95,3 +105,14 @@ class Pacman(Player):
             if self.x % config.CELL_SIZE == 0:
                 dist_to_center = config.CELL_SIZE
             self.x += min(self.speed, dist_to_center)
+
+    def draw(self, screen, offset_x, offset_y, color):
+        center_x = offset_x + self.x + config.CELL_SIZE // 2
+        center_y = offset_y + self.y + config.CELL_SIZE // 2
+
+        pygame.draw.circle(
+            screen,
+            color,
+            (center_x, center_y),
+            config.BALL_SIZE
+        )

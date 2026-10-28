@@ -86,7 +86,8 @@ class GameEngine:
                     info.draw(screen=self.screen)
                 self.handle_gums()
                 self.draw_walls()
-                self.drawPacman()
+                self.pacman.draw(self.screen, self.offset_x, self.offset_y, config.YELLOW)
+                # self.drawPacman()
             pygame.display.flip()
             self.clock.tick(60)
             self.handleEvents()
@@ -110,18 +111,6 @@ class GameEngine:
                     self.state = "game"
                 if res == "quit":
                     self.running = False
-
-            # elif event.type == pygame.KEYDOWN:
-            #     directions = {
-            #         pygame.K_UP: config.UP,
-            #         pygame.K_DOWN: config.DOWN,
-            #         pygame.K_LEFT: config.LEFT,
-            #         pygame.K_RIGHT: config.RIGHT,
-            #     }
-            #     if event.key in directions:
-            #         self.pacman.set_direction(directions[event.key])
-            #     if event.key == pygame.K_q:
-            #         self.exit()
 
     def handle_game_event(self, event):
         if event.type == pygame.KEYDOWN:
