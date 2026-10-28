@@ -49,7 +49,7 @@ class Pacman:
             elif (self.direction is not None
                     and not self.can_move(self.direction)):
                 self.direction = None
-        if self.direction == None:
+        if self.direction is None:
             return
         if self.direction == config.UP:
             dist_to_center = self.y % config.CELL_SIZE
