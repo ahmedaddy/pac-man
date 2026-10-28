@@ -1,10 +1,9 @@
 import pygame
 
 from .config import config
-from abc import abstractmethod, ABC
 
 
-class Player(ABC):
+class Player():
     def __init__(self, row, col, map_data):
         self.x = col * config.CELL_SIZE
         self.y = row * config.CELL_SIZE
@@ -85,6 +84,7 @@ class Player(ABC):
             (center_x, center_y),
             config.BALL_SIZE
         )
+
 
 class Pacman(Player):
     def __init__(self, row, col, map_data):
