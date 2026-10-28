@@ -1,7 +1,8 @@
 from .config import config
+from abc import abstractmethod, ABC
 
 
-class Pacman:
+class Player(ABC):
     def __init__(self, row, col, map_data):
         self.x = col * config.CELL_SIZE
         self.y = row * config.CELL_SIZE
@@ -11,6 +12,29 @@ class Pacman:
         self.direction = None
         self.desired_direction = None
 
+    @abstractmethod
+    def is_aligned(self):
+        pass
+
+    @abstractmethod
+    def get_current_cell(self):
+        pass
+
+    @abstractmethod
+    def can_move(self):
+        pass
+
+    @abstractmethod
+    def can_move(self, direction):
+        pass
+
+    @abstractmethod
+    def move(self):
+        pass
+
+class Pacman(Player):
+    def __init__(self, row, col, map_data):
+        super().__init__(row, col, map_data)
         self.lives = 3
         self.score = 0
 
@@ -37,9 +61,6 @@ class Pacman:
         if direction == config.RIGHT:
             return col < len(self.map[0]) - 1 and not cell.right
         return False
-
-    def set_direction(self, direction):
-        self.desired_direction = direction
 
     def move(self):
         if self.is_aligned():
