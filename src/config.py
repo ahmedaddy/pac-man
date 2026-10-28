@@ -1,5 +1,6 @@
 class config:
     YELLOW = "#FFFF00"
+    RED = "#F62217"
     BLINKY = "#FF0000"
     PINK = "#EA82E5"
     CYAN = "#46BFEE"

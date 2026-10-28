@@ -2,6 +2,7 @@ import pygame
 
 from .config import config
 from .pacman import Pacman
+from .ghost import Ghosts
 from .components import Button
 from .main_menu import Mainmenu
 import random
@@ -55,14 +56,34 @@ class GameEngine:
             len(self.map[0]) // 2,
             self.map
         )
+        self.rows = len(self.map)
+        self.cols = len(self.map[0])
+        self.red_ghost = Ghosts(
+            1,
+            0,
+            self.map
+        )
+        self.pink_ghost = Ghosts(
+            self.rows - 1,
+            1,
+            self.map
+        )
+        self.orange_ghost = Ghosts(
+            1,
+            self.cols - 1,
+            self.map
+        )
+        self.cyan_ghost = Ghosts(
+            self.rows - 2,
+            self.cols - 1,
+            self.map
+        )
         self.running = True
         self.state = "menu"
         self.menu = Mainmenu(self.screen)
         self.gums = self.generate_pacgums()
         self.super_gums = self.generate_supergums()
         self.gums_state = False
-
-
 
     def exit(self):
         """Stop the game."""
@@ -87,6 +108,10 @@ class GameEngine:
                 self.handle_gums()
                 self.draw_walls()
                 self.pacman.draw(self.screen, self.offset_x, self.offset_y, config.YELLOW)
+                self.red_ghost.draw(self.screen, self.offset_x, self.offset_y, config.RED)
+                self.pink_ghost.draw(self.screen, self.offset_x, self.offset_y, config.PINK)
+                self.orange_ghost.draw(self.screen, self.offset_x, self.offset_y, config.ORANGE)
+                self.cyan_ghost.draw(self.screen, self.offset_x, self.offset_y, config.CYAN)
                 # self.drawPacman()
             pygame.display.flip()
             self.clock.tick(60)
