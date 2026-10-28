@@ -14,37 +14,6 @@ class Player(ABC):
         self.direction = None
         self.desired_direction = None
 
-    @abstractmethod
-    def is_aligned(self):
-        pass
-
-    @abstractmethod
-    def get_current_cell(self):
-        pass
-
-    @abstractmethod
-    def can_move(self):
-        pass
-
-    @abstractmethod
-    def can_move(self, direction):
-        pass
-
-    @abstractmethod
-    def move(self):
-        pass
-
-    @abstractmethod
-    def draw(self):
-        pass
-
-
-class Pacman(Player):
-    def __init__(self, row, col, map_data):
-        super().__init__(row, col, map_data)
-        self.lives = 3
-        self.score = 0
-
     def is_aligned(self):
         return (
             self.x % config.CELL_SIZE == 0
@@ -116,3 +85,9 @@ class Pacman(Player):
             (center_x, center_y),
             config.BALL_SIZE
         )
+
+class Pacman(Player):
+    def __init__(self, row, col, map_data):
+        super().__init__(row, col, map_data)
+        self.lives = 3
+        self.score = 0

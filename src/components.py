@@ -26,7 +26,6 @@ class Button:
                 self.current_color = self.base_color
                 self.is_hovered = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            print(event.button)
             if event.button == 1 and self.is_hovered:
                 return True
         return False
