@@ -96,8 +96,8 @@ class GameEngine:
             if self.state == "menu":
                 self.menu.draw()
             elif self.state == "game":
-                self.pacman.move()
                 self.screen.fill("#001219")
+                self.pacman.move()
                 if not self.gums_state:
                     for gum in self.gums:
                         gum.draw(screen=self.screen, offset_x=self.offset_x, offset_y=self.offset_y)
@@ -112,6 +112,10 @@ class GameEngine:
                 self.pink_ghost.draw(self.screen, self.offset_x, self.offset_y, config.PINK)
                 self.orange_ghost.draw(self.screen, self.offset_x, self.offset_y, config.ORANGE)
                 self.cyan_ghost.draw(self.screen, self.offset_x, self.offset_y, config.CYAN)
+                self.red_ghost.first_move()
+                self.pink_ghost.first_move()
+                self.orange_ghost.first_move()
+                self.cyan_ghost.first_move()
                 # self.drawPacman()
             pygame.display.flip()
             self.clock.tick(60)
@@ -225,13 +229,12 @@ class GameEngine:
                         gum_y = (row * config.CELL_SIZE) + config.CELL_SIZE // 2
                         pac_gums.append(Pacgum(gum_x, gum_y, config.GUM_SIZE, 10))
         return pac_gums
-    
+
     def generate_supergums(self):
         super_pacgums = []
         for corner in self.corners:
             super_pacgums.append(Pacgum(corner[0], corner[1], config.SUPER_GUM_SIZE, 50))
         return super_pacgums
-        
 
     def handle_gums(self):
         all_done = 0
