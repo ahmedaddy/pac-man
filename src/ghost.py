@@ -2,6 +2,7 @@ from .pacman import Player
 from .config import config
 from collections import deque
 from .pacman import Pacman
+import random
 # row y, column x.
 
 
@@ -36,18 +37,19 @@ class Ghosts(Player):
         self.direction = direction
         self.move()
 
-    def tracking_pacman(self, pac_man_position):
-        row, col, _ = pac_man_position
+    def tracking_pacman(self):
+        pacman_position = self.pacman.get_current_cell()
+        row, col, _ = pacman_position
         self.ghost_move(row, col)
 
-    def go_next_pacman(self, position):
+    def go_next_pacman(self):
         pacman_position = self.pacman.get_current_cell()
         pac_row, pac_col, _ = pacman_position
-        pac_row += 1
+        possible_positions = self.get_neighbors((pac_row, pac_col))
+        pac_row, pac_col = random.choice(possible_positions)
         self.ghost_move(pac_row, pac_col)
 
     def move_random_direction(self):
-        import random
         directions = [self.direction]
         if self.is_aligned():
             if self.can_move(config.UP) and self.direction != config.DOWN:
