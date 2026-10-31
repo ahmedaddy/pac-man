@@ -114,7 +114,7 @@ class GameEngine:
                 self.cyan_ghost.draw(self.screen, self.offset_x, self.offset_y, config.CYAN)
                 # self.red_ghost.ghost_move()
                 self.pink_ghost.move_random_direction()
-                self.orange_ghost.move_random_direction()
+                # self.orange_ghost.move_random_direction()
                 self.cyan_ghost.ghost_move()
                 # self.drawPacman()
             pygame.display.flip()

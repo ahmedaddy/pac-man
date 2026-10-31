@@ -12,19 +12,26 @@ class Ghosts(Player):
         self.is_eaten = False
 
     def ghost_move(self):
-        if self.is_aligned:
+        if self.is_aligned():
             path = self.path_to_pacman((0, 0))
-            print(f"path == {path}")
-            row_c, col_c = path[0]
-            row_n, col_n = path[1]
-        if row_c < row_n:
-            direction = config.DOWN
-        elif row_c > row_n:
-            direction = config.UP
-        elif col_c < col_n:
-            direction = config.RIGHT
+            if len(path) == 1:
+                direction = None
+            # print(f"path == {path}")
+            # print(path[0])
+            else:
+                row_c, col_c = path[0]
+                row_n, col_n = path[1]
+                if row_c < row_n:
+                    direction = config.DOWN
+                elif row_c > row_n:
+                    direction = config.UP
+                elif col_c < col_n:
+                    direction = config.RIGHT
+                else:
+                    direction = config.LEFT
         else:
-            direction = config.LEFT
+            direction = self.move_random_direction()
+            return
 
         self.direction = direction
         self.move()
@@ -95,8 +102,7 @@ class Ghosts(Player):
                 return path[::-1]
             neighbors = self.get_neighbors(current)
             for neighbor in neighbors:
-                if neighbor in visited:
-                    continue
-                visited.add(neighbor)
-                parent[neighbor] = current
-                queue.append(neighbor)
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    parent[neighbor] = current
+                    queue.append(neighbor)
