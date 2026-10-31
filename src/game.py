@@ -62,25 +62,29 @@ class GameEngine:
             1,
             0,
             self.map,
-            self.pacman
+            self.pacman,
+            3
         )
         self.pink_ghost = Ghosts(
             self.rows - 1,
             1,
             self.map,
-            self.pacman
+            self.pacman,
+            3
         )
         self.orange_ghost = Ghosts(
             1,
             self.cols - 1,
             self.map,
-            self.pacman
+            self.pacman,
+            3
         )
         self.cyan_ghost = Ghosts(
             self.rows - 2,
             self.cols - 1,
             self.map,
-            self.pacman
+            self.pacman,
+            2
         )
         self.running = True
         self.state = "menu"

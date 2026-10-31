@@ -7,10 +7,10 @@ import random
 
 
 class Ghosts(Player):
-    def __init__(self, row, col, map_data, pacman: Pacman):
+    def __init__(self, row, col, map_data, pacman: Pacman, speed):
         super().__init__(row, col,  map_data)
         self.pacman = pacman
-        self.speed = 2
+        self.speed = speed
         self.edible = False
         self.is_eaten = False
 
