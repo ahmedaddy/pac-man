@@ -60,10 +60,10 @@ class GameEngine:
         self.rows = len(self.map)
         self.cols = len(self.map[0])
         self.ghosts = [
-            Ghosts(1, 0, self.map, self.pacman, 3, config.RED),
-            Ghosts(self.rows - 1, 1, self.map, self.pacman, 3, config.PINK),
-            Ghosts(1, self.cols - 1, self.map, self.pacman, 3, config.ORANGE),
-            Ghosts(self.rows - 2, self.cols - 1, self.map, self.pacman, 2, config.CYAN)
+            Ghosts(1, 0, self.map, self.pacman, 2, config.RED),
+            Ghosts(self.rows - 1, 1, self.map, self.pacman, 2, config.PINK),
+            Ghosts(1, self.cols - 1, self.map, self.pacman, 2, config.ORANGE),
+            Ghosts(self.rows - 2, self.cols - 1, self.map, self.pacman, 1, config.CYAN)
         ]
         self.running = True
         self.state = "menu"
@@ -103,7 +103,7 @@ class GameEngine:
                 self.ghosts[3].go_next_pacman()
                 # self.drawPacman()
             pygame.display.flip()
-            self.clock.tick(30)
+            self.clock.tick(50)
             self.handleEvents()
 
         pygame.quit()
