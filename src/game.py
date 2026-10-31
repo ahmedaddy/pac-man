@@ -61,22 +61,26 @@ class GameEngine:
         self.red_ghost = Ghosts(
             1,
             0,
-            self.map
+            self.map,
+            self.pacman
         )
         self.pink_ghost = Ghosts(
             self.rows - 1,
             1,
-            self.map
+            self.map,
+            self.pacman
         )
         self.orange_ghost = Ghosts(
             1,
             self.cols - 1,
-            self.map
+            self.map,
+            self.pacman
         )
         self.cyan_ghost = Ghosts(
             self.rows - 2,
             self.cols - 1,
-            self.map
+            self.map,
+            self.pacman
         )
         self.running = True
         self.state = "menu"
@@ -112,13 +116,13 @@ class GameEngine:
                 self.pink_ghost.draw(self.screen, self.offset_x, self.offset_y, config.PINK)
                 self.orange_ghost.draw(self.screen, self.offset_x, self.offset_y, config.ORANGE)
                 self.cyan_ghost.draw(self.screen, self.offset_x, self.offset_y, config.CYAN)
-                # self.red_ghost.ghost_move()
+                self.red_ghost.tracking_pacman(self.pacman.get_current_cell())
                 self.pink_ghost.move_random_direction()
-                # self.orange_ghost.move_random_direction()
-                self.cyan_ghost.ghost_move(self.pacman.get_current_cell())
+                self.orange_ghost.move_random_direction()
+                self.cyan_ghost.go_next_pacman(self.pacman.get_current_cell())
                 # self.drawPacman()
             pygame.display.flip()
-            self.clock.tick(60)
+            self.clock.tick(30)
             self.handleEvents()
 
         pygame.quit()

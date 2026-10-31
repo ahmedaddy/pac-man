@@ -1,24 +1,23 @@
 from .pacman import Player
 from .config import config
 from collections import deque
+from .pacman import Pacman
 # row y, column x.
 
 
 class Ghosts(Player):
-    def __init__(self, row, col, map_data):
+    def __init__(self, row, col, map_data, pacman: Pacman):
         super().__init__(row, col,  map_data)
+        self.pacman = pacman
         self.speed = 2
         self.edible = False
         self.is_eaten = False
 
-    def ghost_move(self, pac_position):
-        row, col, _ = pac_position
+    def ghost_move(self, row, col):
         if self.is_aligned():
             path = self.path_to_pacman((row, col))
             if len(path) == 1:
                 direction = None
-            # print(f"path == {path}")
-            # print(path[0])
             else:
                 row_c, col_c = path[0]
                 row_n, col_n = path[1]
@@ -36,6 +35,16 @@ class Ghosts(Player):
 
         self.direction = direction
         self.move()
+
+    def tracking_pacman(self, pac_man_position):
+        row, col, _ = pac_man_position
+        self.ghost_move(row, col)
+
+    def go_next_pacman(self, position):
+        pacman_position = self.pacman.get_current_cell()
+        pac_row, pac_col, _ = pacman_position
+        pac_row += 1
+        self.ghost_move(pac_row, pac_col)
 
     def move_random_direction(self):
         import random
