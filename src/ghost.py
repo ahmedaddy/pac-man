@@ -11,9 +11,10 @@ class Ghosts(Player):
         self.edible = False
         self.is_eaten = False
 
-    def ghost_move(self):
+    def ghost_move(self, pac_position):
+        row, col, _ = pac_position
         if self.is_aligned():
-            path = self.path_to_pacman((0, 0))
+            path = self.path_to_pacman((row, col))
             if len(path) == 1:
                 direction = None
             # print(f"path == {path}")

@@ -115,7 +115,7 @@ class GameEngine:
                 # self.red_ghost.ghost_move()
                 self.pink_ghost.move_random_direction()
                 # self.orange_ghost.move_random_direction()
-                self.cyan_ghost.ghost_move()
+                self.cyan_ghost.ghost_move(self.pacman.get_current_cell())
                 # self.drawPacman()
             pygame.display.flip()
             self.clock.tick(60)
