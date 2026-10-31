@@ -4,7 +4,7 @@ from .config import config
 
 
 class Player():
-    def __init__(self, row, col, map_data):
+    def __init__(self, row, col, map_data, color):
         self.x = col * config.CELL_SIZE
         self.y = row * config.CELL_SIZE
         self.map = map_data
@@ -12,6 +12,7 @@ class Player():
         self.speed = 5
         self.direction = None
         self.desired_direction = None
+        self.color = color
 
     def is_aligned(self):
         return (
@@ -74,20 +75,20 @@ class Player():
                 dist_to_center = config.CELL_SIZE
             self.x += min(self.speed, dist_to_center)
 
-    def draw(self, screen, offset_x, offset_y, color):
+    def draw(self, screen, offset_x, offset_y):
         center_x = offset_x + self.x + config.CELL_SIZE // 2
         center_y = offset_y + self.y + config.CELL_SIZE // 2
 
         pygame.draw.circle(
             screen,
-            color,
+            self.color,
             (center_x, center_y),
             config.BALL_SIZE
         )
 
 
 class Pacman(Player):
-    def __init__(self, row, col, map_data):
-        super().__init__(row, col, map_data)
+    def __init__(self, row, col, map_data, color):
+        super().__init__(row, col, map_data, color)
         self.lives = 3
         self.score = 0

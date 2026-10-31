@@ -7,8 +7,8 @@ import random
 
 
 class Ghosts(Player):
-    def __init__(self, row, col, map_data, pacman: Pacman, speed):
-        super().__init__(row, col,  map_data)
+    def __init__(self, row, col, map_data, pacman: Pacman, speed, color):
+        super().__init__(row, col, map_data, color)
         self.pacman = pacman
         self.speed = speed
         self.edible = False

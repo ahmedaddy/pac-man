@@ -54,38 +54,17 @@ class GameEngine:
         self.pacman = Pacman(
             len(self.map) // 2,
             len(self.map[0]) // 2,
-            self.map
+            self.map,
+            config.YELLOW
         )
         self.rows = len(self.map)
         self.cols = len(self.map[0])
-        self.red_ghost = Ghosts(
-            1,
-            0,
-            self.map,
-            self.pacman,
-            3
-        )
-        self.pink_ghost = Ghosts(
-            self.rows - 1,
-            1,
-            self.map,
-            self.pacman,
-            3
-        )
-        self.orange_ghost = Ghosts(
-            1,
-            self.cols - 1,
-            self.map,
-            self.pacman,
-            3
-        )
-        self.cyan_ghost = Ghosts(
-            self.rows - 2,
-            self.cols - 1,
-            self.map,
-            self.pacman,
-            2
-        )
+        self.ghosts = [
+            Ghosts(1, 0, self.map, self.pacman, 3, config.RED),
+            Ghosts(self.rows - 1, 1, self.map, self.pacman, 3, config.PINK),
+            Ghosts(1, self.cols - 1, self.map, self.pacman, 3, config.ORANGE),
+            Ghosts(self.rows - 2, self.cols - 1, self.map, self.pacman, 2, config.CYAN)
+        ]
         self.running = True
         self.state = "menu"
         self.menu = Mainmenu(self.screen)
@@ -115,15 +94,13 @@ class GameEngine:
                     info.draw(screen=self.screen)
                 self.handle_gums()
                 self.draw_walls()
-                self.pacman.draw(self.screen, self.offset_x, self.offset_y, config.YELLOW)
-                self.red_ghost.draw(self.screen, self.offset_x, self.offset_y, config.RED)
-                self.pink_ghost.draw(self.screen, self.offset_x, self.offset_y, config.PINK)
-                self.orange_ghost.draw(self.screen, self.offset_x, self.offset_y, config.ORANGE)
-                self.cyan_ghost.draw(self.screen, self.offset_x, self.offset_y, config.CYAN)
-                self.red_ghost.tracking_pacman()
-                self.pink_ghost.move_random_direction()
-                self.orange_ghost.move_random_direction()
-                self.cyan_ghost.go_next_pacman()
+                self.pacman.draw(self.screen, self.offset_x, self.offset_y)
+                for ghost in self.ghosts:
+                    ghost.draw(self.screen, self.offset_x, self.offset_y)
+                self.ghosts[0].tracking_pacman()
+                self.ghosts[1].move_random_direction()
+                self.ghosts[2].move_random_direction()
+                self.ghosts[3].go_next_pacman()
                 # self.drawPacman()
             pygame.display.flip()
             self.clock.tick(30)
@@ -243,6 +220,7 @@ class GameEngine:
         for corner in self.corners:
             super_pacgums.append(Pacgum(corner[0], corner[1], config.SUPER_GUM_SIZE, 50))
         return super_pacgums
+    
 
     def handle_gums(self):
         all_done = 0
