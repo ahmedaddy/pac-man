@@ -9,7 +9,7 @@ class Player():
         self.y = row * config.CELL_SIZE
         self.map = map_data
 
-        self.speed = 3
+        self.speed = 5
         self.direction = None
         self.desired_direction = None
 
