@@ -50,10 +50,11 @@ class GameEngine:
             self.corrdinates_to_pixels(len(self.map) - 1, len(self.map[0]) - 1)
         ]
         self.screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
+        self.pacman_starts_positions = (len(self.map) // 2, len(self.map[0]) // 2)
         # spawn pacman at the center of the maze
         self.pacman = Pacman(
-            len(self.map) // 2,
-            len(self.map[0]) // 2,
+            self.pacman_starts_positions[0],
+            self.pacman_starts_positions[1],
             self.map,
             config.YELLOW
         )
@@ -93,6 +94,7 @@ class GameEngine:
                 for info in self.infos():
                     info.draw(screen=self.screen)
                 self.handle_gums()
+                self.handle_super_pacgums()
                 self.draw_walls()
                 self.pacman.draw(self.screen, self.offset_x, self.offset_y)
                 for ghost in self.ghosts:
@@ -197,6 +199,8 @@ class GameEngine:
         infos = []
         score = Button(config.WIDTH // 2, 0, 40, 20, f"Score: {self.pacman.score}", "black", "black", "white")
         infos.append(score)
+        lives = Button(config.WIDTH // 2 + 120, 0, 40, 20, f"lives: {self.pacman.lives}", "black", "black", "white")
+        infos.append(lives)
         return infos
 
     def generate_pacgums(self):
@@ -244,3 +248,48 @@ class GameEngine:
                     self.pacman.score += 10
         if all_done == 0:
             self.gums_state = True
+    
+    def handle_super_pacgums(self):
+        for ghost in self.ghosts:
+            if not ghost.is_eaten:
+                pac_man_rect = pygame.Rect(
+                    self.pacman.x,
+                    self.pacman.y,
+                    config.CELL_SIZE,
+                    config.CELL_SIZE
+                )
+                ghost_rect = pygame.Rect(
+                    ghost.x,
+                    ghost.y,
+                    config.BALL_SIZE,
+                    config.BALL_SIZE
+                )
+                if (ghost_rect.colliderect(pac_man_rect)):
+                    if (self.pacman.x != self.pacman_starts_positions[0] * config.CELL_SIZE
+                        and self.pacman.y != self.pacman_starts_positions[1] * config.CELL_SIZE):
+                        self.pacman.lives -= 1
+                        self.pacman.x = self.pacman_starts_positions[0] * config.CELL_SIZE
+                        self.pacman.y = self.pacman_starts_positions[1] * config.CELL_SIZE
+                        self.pacman.set_direction(None)
+
+    # def handle_super_pacgums(self):
+    #     for gum in self.ghosts:
+    #         if not gum.is_eaten:
+    #             pac_man_rect = pygame.Rect(
+    #                 self.pacman.x,
+    #                 self.pacman.y,
+    #                 config.CELL_SIZE,
+    #                 config.CELL_SIZE
+    #             )
+    #             gum_rect = pygame.Rect(
+    #                 gum.x - config.GUM_SIZE,
+    #                 gum.y - config.GUM_SIZE,
+    #                 config.GUM_SIZE,
+    #                 config.GUM_SIZE
+    #             )
+    #             if gum_rect.colliderect(pac_man_rect):
+    #                 print("HIT")
+    #                 self.pacman.lives -= 1
+    #                 self.pacman.x = len(self.map) // 2 * config.CELL_SIZE
+    #                 self.pacman.y = len(self.map[0]) // 2 * config.CELL_SIZE
+    #                 self.pacman.set_direction(None)
