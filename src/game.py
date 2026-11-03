@@ -72,6 +72,7 @@ class GameEngine:
         self.gums = self.generate_pacgums()
         self.super_gums = self.generate_supergums()
         self.gums_state = False
+        self.super_gum_timer = None
 
     def exit(self):
         """Stop the game."""
@@ -94,6 +95,8 @@ class GameEngine:
                 for info in self.infos():
                     info.draw(screen=self.screen)
                 self.handle_gums()
+                self.handle_super_pacgums()
+                self.update_super_gum_timer()
                 self.draw_walls()
                 self.pacman.draw(self.screen, self.offset_x, self.offset_y)
                 for ghost in self.ghosts:
@@ -276,24 +279,33 @@ class GameEngine:
     #                     self.pacman.y = self.pacman_starts_positions[1] * config.CELL_SIZE
     #                     self.pacman.set_direction(None)
 
-    # def handle_super_pacgums(self):
-    #     for gum in self.ghosts:
-    #         if not gum.is_eaten:
-    #             pac_man_rect = pygame.Rect(
-    #                 self.pacman.x,
-    #                 self.pacman.y,
-    #                 config.CELL_SIZE,
-    #                 config.CELL_SIZE
-    #             )
-    #             gum_rect = pygame.Rect(
-    #                 gum.x - config.GUM_SIZE,
-    #                 gum.y - config.GUM_SIZE,
-    #                 config.GUM_SIZE,
-    #                 config.GUM_SIZE
-    #             )
-    #             if gum_rect.colliderect(pac_man_rect):
-    #                 print("HIT")
-    #                 self.pacman.lives -= 1
-    #                 self.pacman.x = len(self.map) // 2 * config.CELL_SIZE
-    #                 self.pacman.y = len(self.map[0]) // 2 * config.CELL_SIZE
-    #                 self.pacman.set_direction(None)
+    def handle_super_pacgums(self):
+        for gum in self.super_gums:
+            if not gum.is_eaten:
+                pac_man_rect = pygame.Rect(
+                    self.pacman.x,
+                    self.pacman.y,
+                    config.CELL_SIZE,
+                    config.CELL_SIZE
+                )
+                gum_rect = pygame.Rect(
+                    gum.x - config.GUM_SIZE,
+                    gum.y - config.GUM_SIZE,
+                    config.GUM_SIZE,
+                    config.GUM_SIZE
+                )
+                if gum_rect.colliderect(pac_man_rect):
+                    gum.is_eaten = True
+                    for ghost in self.ghosts:
+                        ghost.edible = True
+                    self.super_gum_timer = pygame.time.get_ticks()
+
+    def update_super_gum_timer(self):
+        if self.super_gum_timer is not None:
+            current_time = pygame.time.get_ticks()
+
+            if current_time - self.super_gum_timer >= config.SUPER_GUM_DURATION:
+                for ghost in self.ghosts:
+                    ghost.edible = False
+
+                self.super_gum_timer = None

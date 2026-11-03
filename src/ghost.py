@@ -146,5 +146,3 @@ class Ghosts(Player):
                     ghost.reset_ghost_position()
                 else:
                     self.Pacman.lose_life()
-            if self.Pacman.lives == 2:
-                ghost.edible = True

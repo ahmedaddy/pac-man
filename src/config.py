@@ -19,3 +19,4 @@ class config:
 
     GUM_SIZE = 5
     SUPER_GUM_SIZE = 10
+    SUPER_GUM_DURATION = 8000
