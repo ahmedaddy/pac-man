@@ -61,10 +61,10 @@ class GameEngine:
         self.rows = len(self.map)
         self.cols = len(self.map[0])
         self.ghosts = [
-            Ghosts(1, 0, self.map, self.pacman, 2, config.RED),
-            Ghosts(self.rows - 1, 1, self.map, self.pacman, 2, config.PINK),
-            Ghosts(1, self.cols - 1, self.map, self.pacman, 2, config.ORANGE),
-            Ghosts(self.rows - 2, self.cols - 1, self.map, self.pacman, 1, config.CYAN)
+            Ghosts(1, 0, self.map, self.pacman, 2, config.RED, self),
+            Ghosts(self.rows - 1, 1, self.map, self.pacman, 2, config.PINK, self),
+            Ghosts(1, self.cols - 1, self.map, self.pacman, 2, config.ORANGE, self),
+            Ghosts(self.rows - 2, self.cols - 1, self.map, self.pacman, 1, config.CYAN, self)
         ]
         self.running = True
         self.state = "menu"
@@ -94,18 +94,22 @@ class GameEngine:
                 for info in self.infos():
                     info.draw(screen=self.screen)
                 self.handle_gums()
-                self.handle_super_pacgums()
                 self.draw_walls()
                 self.pacman.draw(self.screen, self.offset_x, self.offset_y)
                 for ghost in self.ghosts:
                     ghost.draw(self.screen, self.offset_x, self.offset_y)
-                self.ghosts[0].tracking_pacman()
-                self.ghosts[1].move_random_direction()
-                self.ghosts[2].move_random_direction()
-                self.ghosts[3].go_next_pacman()
+                    ghost.ghost_in_edible()
+                if not ghost.edible:
+                    self.ghosts[0].tracking_pacman()
+                    self.ghosts[1].move_random_direction()
+                    self.ghosts[2].move_random_direction()
+                    self.ghosts[3].go_next_pacman()
+                else:
+                    for ghost in self.ghosts:
+                        ghost.ghost_move(ghost.start_position[0], ghost.start_position[1])
                 # self.drawPacman()
             pygame.display.flip()
-            self.clock.tick(50)
+            self.clock.tick(40)
             self.handleEvents()
 
         pygame.quit()
@@ -249,28 +253,28 @@ class GameEngine:
         if all_done == 0:
             self.gums_state = True
     
-    def handle_super_pacgums(self):
-        for ghost in self.ghosts:
-            if not ghost.is_eaten:
-                pac_man_rect = pygame.Rect(
-                    self.pacman.x,
-                    self.pacman.y,
-                    config.CELL_SIZE,
-                    config.CELL_SIZE
-                )
-                ghost_rect = pygame.Rect(
-                    ghost.x,
-                    ghost.y,
-                    config.BALL_SIZE,
-                    config.BALL_SIZE
-                )
-                if (ghost_rect.colliderect(pac_man_rect)):
-                    if (self.pacman.x != self.pacman_starts_positions[0] * config.CELL_SIZE
-                        and self.pacman.y != self.pacman_starts_positions[1] * config.CELL_SIZE):
-                        self.pacman.lives -= 1
-                        self.pacman.x = self.pacman_starts_positions[0] * config.CELL_SIZE
-                        self.pacman.y = self.pacman_starts_positions[1] * config.CELL_SIZE
-                        self.pacman.set_direction(None)
+    # def handle_super_pacgums(self):
+    #     for ghost in self.ghosts:
+    #         if not ghost.is_eaten:
+    #             pac_man_rect = pygame.Rect(
+    #                 self.pacman.x,
+    #                 self.pacman.y,
+    #                 config.CELL_SIZE,
+    #                 config.CELL_SIZE
+    #             )
+    #             ghost_rect = pygame.Rect(
+    #                 ghost.x,
+    #                 ghost.y,
+    #                 config.BALL_SIZE,
+    #                 config.BALL_SIZE
+    #             )
+    #             if (ghost_rect.colliderect(pac_man_rect)):
+    #                 if (self.pacman.x != self.pacman_starts_positions[0] * config.CELL_SIZE
+    #                     and self.pacman.y != self.pacman_starts_positions[1] * config.CELL_SIZE):
+    #                     self.pacman.lives -= 1
+    #                     self.pacman.x = self.pacman_starts_positions[0] * config.CELL_SIZE
+    #                     self.pacman.y = self.pacman_starts_positions[1] * config.CELL_SIZE
+    #                     self.pacman.set_direction(None)
 
     # def handle_super_pacgums(self):
     #     for gum in self.ghosts:

@@ -1,15 +1,19 @@
-from .pacman import Player
+import pygame
+from .pacman import Player, Pacman
 from .config import config
 from collections import deque
-from .pacman import Pacman
 import random
 # row y, column x.
 
 
 class Ghosts(Player):
-    def __init__(self, row, col, map_data, pacman: Pacman, speed, color):
+    def __init__(
+        self, row, col, map_data, Pacman: Pacman, speed, color, GameEngine
+            ):
         super().__init__(row, col, map_data, color)
-        self.pacman = pacman
+        self.Pacman = Pacman
+        self.GameEngine = GameEngine
+        self.start_position = [row, col]
         self.speed = speed
         self.edible = False
         self.is_eaten = False
@@ -38,12 +42,12 @@ class Ghosts(Player):
         self.move()
 
     def tracking_pacman(self):
-        pacman_position = self.pacman.get_current_cell()
+        pacman_position = self.Pacman.get_current_cell()
         row, col, _ = pacman_position
         self.ghost_move(row, col)
 
     def go_next_pacman(self):
-        pacman_position = self.pacman.get_current_cell()
+        pacman_position = self.Pacman.get_current_cell()
         pac_row, pac_col, _ = pacman_position
         possible_positions = self.get_neighbors((pac_row, pac_col))
         pac_row, pac_col = random.choice(possible_positions)
@@ -118,3 +122,29 @@ class Ghosts(Player):
                     visited.add(neighbor)
                     parent[neighbor] = current
                     queue.append(neighbor)
+
+    def reset_ghost_position(self):
+        self.x = self.start_position[1] * config.CELL_SIZE
+        self.y = self.start_position[0] * config.CELL_SIZE
+
+    def ghost_in_edible(self):
+        pac_man_rect = pygame.Rect(
+                    self.Pacman.x,
+                    self.Pacman.y,
+                    config.CELL_SIZE,
+                    config.CELL_SIZE
+                )
+        for ghost in self.GameEngine.ghosts:
+            ghost_rect = pygame.Rect(
+                ghost.x,
+                ghost.y,
+                config.CELL_SIZE,
+                config.CELL_SIZE
+            )
+            if ghost_rect.colliderect(pac_man_rect):
+                if ghost.edible:
+                    ghost.reset_ghost_position()
+                else:
+                    self.Pacman.lose_life()
+            if self.Pacman.lives == 2:
+                ghost.edible = True
