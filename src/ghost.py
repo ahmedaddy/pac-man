@@ -20,9 +20,33 @@ class Ghosts(Player):
 
     def ghost_move(self, row, col):
         if self.is_aligned():
-            path = self.path_to_pacman((row, col))
-            if len(path) == 1:
+            current = self.get_current_cell()[:2]
+            target = (row, col)
+
+            path = self.short_path((row, col))
+
+            if self.edible and not self.is_eaten:
+                pac_position = self.Pacman.get_current_cell()[:2]
+                distance = self.bfs_distances(pac_position)
+                danger_in = 2
+                danger_cell = {
+                    pos for pos, distance in distance.items()
+                    if danger_in >= distance
+                }
+                if any(pos in danger_cell for pos in path[1:]):
+                    safe_path = self.short_path(target, danger_cell)
+                    if len(safe_path) > 2:
+                        path = safe_path
+                    else:
+                        neighbors = self.get_neighbors(current)
+                        next_cell = max(
+                            neighbors, key=lambda pos: distance.get(
+                                pos, float("inf"))
+                        )
+                        path = [current, next_cell]
+            if len(path) < 2:
                 direction = None
+                return
             else:
                 row_c, col_c = path[0]
                 row_n, col_n = path[1]
@@ -97,11 +121,14 @@ class Ghosts(Player):
                 neighbors.append(position)
         return neighbors
 
-    def path_to_pacman(self, pacman_position: tuple[int, int]):
+    def short_path(self, target: tuple[int, int], blocked=None):
+        if blocked is None:
+            blocked = set()
+
         row, col, _ = self.get_current_cell()
         start = (row, col)
-        if start == pacman_position:
-            return [start]
+        if start == target:
+            return []
         neighbors = self.get_neighbors(start)
         visited = set()
         visited.add(start)
@@ -111,17 +138,38 @@ class Ghosts(Player):
 
         while queue:
             current = queue.popleft()
-            if current == pacman_position:
+
+            if current == target:
                 while current is not None:
                     path.append(current)
                     current = parent[current]
+
                 return path[::-1]
+
             neighbors = self.get_neighbors(current)
             for neighbor in neighbors:
+                if neighbor in blocked:
+                    continue
+
                 if neighbor not in visited:
                     visited.add(neighbor)
                     parent[neighbor] = current
                     queue.append(neighbor)
+        return []
+
+    def bfs_distances(self, start):
+        queue = deque([start])
+        distances = {start: 0}
+
+        while queue:
+            current = queue.popleft()
+
+            for neighbor in self.get_neighbors(current):
+                if neighbor not in distances:
+                    distances[neighbor] = distances[current] + 1
+                    queue.append(neighbor)
+
+        return distances
 
     def reset_ghost_position(self):
         self.x = self.start_position[1] * config.CELL_SIZE
