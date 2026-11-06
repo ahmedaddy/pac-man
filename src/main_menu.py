@@ -10,7 +10,6 @@ class Mainmenu:
     def __init__(self, screen):
         pygame.init()
         pygame.display.set_caption("Pac-man menu")
-        self.running = True
         self.screen = screen
         self.background = pygame.image.load(
             "src/assets/pixel-raining-background.jpg"
@@ -29,7 +28,7 @@ class Mainmenu:
         self.quit_button.draw(self.screen)
         self.draw_highscore()
 
-    def handle_menu_event(self, event):
+    def handle_event(self, event):
         if self.play_button.handle_button_events(event):
             return "game"
         if self.quit_button.handle_button_events(event):

@@ -5,6 +5,7 @@ from .pacman import Pacman
 from .ghost import Ghosts
 from .components import Button
 from .main_menu import Mainmenu
+from .score_recorder import ScoreRecorder
 import random
 
 
@@ -73,6 +74,7 @@ class GameEngine:
         self.super_gums = self.generate_supergums()
         self.gums_state = False
         self.super_gum_timer = None
+        self.score_recorder = ScoreRecorder(self.screen)
 
     def exit(self):
         """Stop the game."""
@@ -112,7 +114,10 @@ class GameEngine:
                 else:
                     for ghost in self.ghosts:
                         ghost.ghost_move(ghost.start_position[0], ghost.start_position[1])
+                self.handle_death()
                 # self.drawPacman()
+            if self.state == "score":
+                self.score_recorder.draw(self.pacman.score)
             pygame.display.flip()
             self.clock.tick(40)
             self.handleEvents()
@@ -131,11 +136,15 @@ class GameEngine:
             if self.state == "game":
                 self.handle_game_event(event)
             elif self.state == "menu":
-                res = self.menu.handle_menu_event(event)
+                res = self.menu.handle_event(event)
                 if res == "game":
                     self.state = "game"
                 if res == "quit":
                     self.running = False
+            elif self.state == "score":
+                self.score_recorder.handle_event(event)
+            if self.state == "score":
+                self.state = "score"
 
     def handle_game_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -257,29 +266,6 @@ class GameEngine:
                     self.pacman.score += 10
         if all_done == 0:
             self.gums_state = True
-    
-    # def handle_super_pacgums(self):
-    #     for ghost in self.ghosts:
-    #         if not ghost.is_eaten:
-    #             pac_man_rect = pygame.Rect(
-    #                 self.pacman.x,
-    #                 self.pacman.y,
-    #                 config.CELL_SIZE,
-    #                 config.CELL_SIZE
-    #             )
-    #             ghost_rect = pygame.Rect(
-    #                 ghost.x,
-    #                 ghost.y,
-    #                 config.BALL_SIZE,
-    #                 config.BALL_SIZE
-    #             )
-    #             if (ghost_rect.colliderect(pac_man_rect)):
-    #                 if (self.pacman.x != self.pacman_starts_positions[0] * config.CELL_SIZE
-    #                     and self.pacman.y != self.pacman_starts_positions[1] * config.CELL_SIZE):
-    #                     self.pacman.lives -= 1
-    #                     self.pacman.x = self.pacman_starts_positions[0] * config.CELL_SIZE
-    #                     self.pacman.y = self.pacman_starts_positions[1] * config.CELL_SIZE
-    #                     self.pacman.set_direction(None)
 
     def handle_super_pacgums(self):
         for gum in self.super_gums:
@@ -312,3 +298,7 @@ class GameEngine:
                     ghost.is_eaten = False
 
                 self.super_gum_timer = None
+
+    def handle_death(self):
+        if self.pacman.lives == 0:
+            self.state = "score"
