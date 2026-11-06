@@ -26,15 +26,30 @@ class Ghosts(Player):
             path = self.short_path((row, col))
 
             if self.edible and not self.is_eaten:
+
                 pac_position = self.Pacman.get_current_cell()[:2]
                 distance = self.bfs_distances(pac_position)
-                danger_in = 2
+                danger_in = 3
+                is_arrive = current == target
+
                 danger_cell = {
                     pos for pos, distance in distance.items()
                     if danger_in >= distance
                 }
-                if any(pos in danger_cell for pos in path[1:]):
+                is_pac_near = (
+                    distance.get(current, float("inf")) <= danger_in
+                )
+
+                if is_arrive and is_pac_near:
+                    print("heeeeeeeeeeeeeeeeeeeeeeeer")
+                    neighbors = self.get_neighbors(current)
+                    next_cell = max(
+                        neighbors, key=lambda pos: distance.get(pos, -1))
+                    path = [current, next_cell]
+
+                elif any(pos in danger_cell for pos in path[1:]):
                     safe_path = self.short_path(target, danger_cell)
+
                     if len(safe_path) > 2:
                         path = safe_path
                     else:
@@ -44,6 +59,7 @@ class Ghosts(Player):
                                 pos, float("inf"))
                         )
                         path = [current, next_cell]
+
             if len(path) < 2:
                 direction = None
                 return
@@ -58,6 +74,7 @@ class Ghosts(Player):
                     direction = config.RIGHT
                 else:
                     direction = config.LEFT
+
         else:
             direction = self.move_random_direction()
             return
@@ -182,15 +199,16 @@ class Ghosts(Player):
                     config.CELL_SIZE,
                     config.CELL_SIZE
                 )
-        for ghost in self.GameEngine.ghosts:
-            ghost_rect = pygame.Rect(
-                ghost.x,
-                ghost.y,
-                config.CELL_SIZE,
-                config.CELL_SIZE
-            )
-            if ghost_rect.colliderect(pac_man_rect):
-                if ghost.edible:
-                    ghost.reset_ghost_position()
-                else:
-                    self.Pacman.lose_life()
+        # for ghost in self.GameEngine.ghosts:
+        ghost_rect = pygame.Rect(
+            self.x,
+            self.y,
+            config.CELL_SIZE,
+            config.CELL_SIZE
+        )
+        if ghost_rect.colliderect(pac_man_rect):
+            if self.edible:
+                self.is_eaten = True
+                self.reset_ghost_position()
+            else:
+                self.Pacman.lose_life()

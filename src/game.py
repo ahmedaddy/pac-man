@@ -101,6 +101,8 @@ class GameEngine:
                 self.pacman.draw(self.screen, self.offset_x, self.offset_y)
                 for ghost in self.ghosts:
                     ghost.draw(self.screen, self.offset_x, self.offset_y)
+                    if ghost.is_eaten:
+                        continue
                     ghost.ghost_in_edible()
                 if not ghost.edible:
                     self.ghosts[0].tracking_pacman()
@@ -307,5 +309,6 @@ class GameEngine:
             if current_time - self.super_gum_timer >= config.SUPER_GUM_DURATION:
                 for ghost in self.ghosts:
                     ghost.edible = False
+                    ghost.is_eaten = False
 
                 self.super_gum_timer = None
