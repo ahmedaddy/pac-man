@@ -41,7 +41,7 @@ class Ghosts(Player):
                 )
 
                 if is_arrive and is_pac_near:
-                    print("heeeeeeeeeeeeeeeeeeeeeeeer")
+                    # print("heeeeeeeeeeeeeeeeeeeeeeeer")
                     neighbors = self.get_neighbors(current)
                     next_cell = max(
                         neighbors, key=lambda pos: distance.get(pos, -1))
