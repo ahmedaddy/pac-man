@@ -18,6 +18,7 @@ class Mainmenu:
             self.background,
             self.screen.get_size()
         )
+# <<<<<<< HEAD
         # self.play_button = Button((self.screen.get_width() / 2) - 150 / 2,((self.screen.get_height() / 2) - 40 / 2) + height*0.08,150,40, "Play", config.CYAN, config.DARK_BLUE, config.YELLOW)
         screen_width = self.screen.get_width()
         screen_height = self.screen.get_height()
@@ -61,6 +62,11 @@ class Mainmenu:
         )
         # self.quit_button = Button((self.screen.get_width() / 2) - 150 / 2,((self.screen.get_height() / 2) - 40 / 2) + height*0.14,150,40, "Quit", config.CYAN, config.DARK_BLUE, config.YELLOW)
         self.scores = Utils.read_json_file("./high_scores.json")
+# =======
+#         self.play_button = Button((self.screen.get_width() / 2) - 150 / 2,((self.screen.get_height() / 2) - 40 / 2) + height*0.08,150,40, "Play", config.CYAN, config.DARK_BLUE, config.YELLOW)
+#         self.quit_button = Button((self.screen.get_width() / 2) - 150 / 2,((self.screen.get_height() / 2) - 40 / 2) + height*0.14,150,40, "Quit", config.CYAN, config.DARK_BLUE, config.YELLOW)
+#         self.scores = Utils.read_json_file("./high_scores.json") or {"scores": []}
+# >>>>>>> b274d6acd49e7774a79b409df8c784ea72b37e9f
         self.font = pygame.font.SysFont(None, 36)
 
     def draw(self):
@@ -127,6 +133,7 @@ class Mainmenu:
                     return "quit"
 
         return None
+# <<<<<<< HEAD
 
     # def draw_highscore(self):
     #     text_surface = self.font.render("High Scores", True, "red")
@@ -252,3 +259,15 @@ class Mainmenu:
                 hover,
                 rect.topleft
             )
+# =======
+    
+#     def draw_highscore(self):
+#         text_surface = self.font.render("High Scores", True, "red")
+#         text_rect = text_surface.get_rect(center=(self.screen.get_width() / 2 + self.screen.get_width() * 0.25, (self.screen.get_height() / 2) - self.screen.get_height() * 0.25))
+#         self.screen.blit(text_surface, text_rect)
+#         # print(self.scores['scores'])
+#         for i, score in enumerate(self.scores['scores']):
+#             score_surface = self.font.render(score['player_name'] + ": " + str(score["score"]), True, "red")
+#             score_rect = score_surface.get_rect(center=((self.screen.get_width() / 2 + self.screen.get_width() * 0.25) , (self.screen.get_height() / 2) - self.screen.get_height() * 0.25 + (i + 1) * 30))
+#             self.screen.blit(score_surface, score_rect)
+# >>>>>>> b274d6acd49e7774a79b409df8c784ea72b37e9f

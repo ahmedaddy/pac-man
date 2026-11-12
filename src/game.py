@@ -127,9 +127,10 @@ class GameEngine:
     def handleEvents(self):
         """Handle keyboard and window events."""
         for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q:
-                    self.exit()
+            if self.state != "score":
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        self.exit()
 
             if event.type == pygame.QUIT:
                 self.exit()
@@ -142,7 +143,9 @@ class GameEngine:
                 if res == "quit":
                     self.running = False
             elif self.state == "score":
-                self.score_recorder.handle_event(event)
+                rest = self.score_recorder.handle_event(event, self.pacman.score)
+                if rest == "menu":
+                    self.state = "menu"
             if self.state == "score":
                 self.state = "score"
 
