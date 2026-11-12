@@ -16,7 +16,7 @@ class Mainmenu:
         )
         self.play_button = Button((self.screen.get_width() / 2) - 150 / 2,((self.screen.get_height() / 2) - 40 / 2) + height*0.08,150,40, "Play", config.CYAN, config.DARK_BLUE, config.YELLOW)
         self.quit_button = Button((self.screen.get_width() / 2) - 150 / 2,((self.screen.get_height() / 2) - 40 / 2) + height*0.14,150,40, "Quit", config.CYAN, config.DARK_BLUE, config.YELLOW)
-        self.scores = Utils.read_json_file("./high_scores.json")
+        self.scores = Utils.read_json_file("./high_scores.json") or {"scores": []}
         self.font = pygame.font.SysFont(None, 36)
 
     def draw(self):
@@ -45,6 +45,6 @@ class Mainmenu:
         self.screen.blit(text_surface, text_rect)
         # print(self.scores['scores'])
         for i, score in enumerate(self.scores['scores']):
-            score_surface = self.font.render(score['player_name'] + ": " + str(score["high_score"]), True, "red")
+            score_surface = self.font.render(score['player_name'] + ": " + str(score["score"]), True, "red")
             score_rect = score_surface.get_rect(center=((self.screen.get_width() / 2 + self.screen.get_width() * 0.25) , (self.screen.get_height() / 2) - self.screen.get_height() * 0.25 + (i + 1) * 30))
             self.screen.blit(score_surface, score_rect)

@@ -33,12 +33,28 @@ class Button:
 
 class Input:
     def __init__(self, x, y, width, height):
+        self.font = pygame.font.SysFont(None, 36)
         self.rect = pygame.Rect(x, y, width, height)
         self.is_open = False
         self.text = ""
 
     def draw(self, screen):
         pygame.draw.rect(screen, "white", self.rect, border_radius=4)
+        text_surface = self.font.render(self.text, True, "black")
+        text_rect = text_surface.get_rect(center=self.rect.center)
+        screen.blit(text_surface, text_rect)
+
 
     def handle_event(self, event):
-        pass
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            self.is_open = self.rect.collidepoint(event.pos)
+
+        elif self.is_open and event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_BACKSPACE:
+                self.text = self.text[:-1]
+            elif event.key == pygame.K_RETURN:
+                return self.text
+            elif event.unicode.isprintable():
+                self.text += event.unicode
+
+        return None

@@ -1,22 +1,20 @@
 {
-    "scores": [
-        {
-            "player_name": "Player1",
-            "high_score": 1000
-        },
-        {
-            "player_name": "Player2",
-            "high_score": 2000
-        }
-        ,
-        {
-            "player_name": "Player3",
-            "high_score": 1500
-        }
-        ,
-        {
-            "player_name": "Player4",
-            "high_score": 2500
-        }
-    ]
+  "scores": [
+    {
+      "player_name": "Player1",
+      "score": 100
+    },
+    {
+      "player_name": "Player2",
+      "score": 22
+    },
+    {
+      "player_name": "Player3",
+      "score": 54
+    },
+    {
+      "player_name": "Player4",
+      "score": 300
+    }
+  ]
 }
