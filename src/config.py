@@ -15,7 +15,7 @@ class config:
     DOWN = "DOWN"
     WIDTH = 1080
     HEIGHT = 720
-    BALL_SIZE = 10
+    BALL_SIZE = 15
 
     GUM_SIZE = 5
     SUPER_GUM_SIZE = 10

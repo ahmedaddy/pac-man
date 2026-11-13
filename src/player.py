@@ -79,18 +79,12 @@ class Player():
         center_x = offset_x + self.x + config.CELL_SIZE // 2
         center_y = offset_y + self.y + config.CELL_SIZE // 2
 
-        if self.sprite is not None:
-            sprite_rect = self.sprite.get_rect(
-                center=(center_x, center_y)
-            )
-            screen.blit(self.sprite, sprite_rect)
-        else:
-            pygame.draw.circle(
-                screen,
-                self.color,
-                (center_x, center_y),
-                config.BALL_SIZE
-            )
+        sprite = self.sprite
+
+        sprite_rect = sprite.get_rect(
+            center=(center_x, center_y)
+        )
+        screen.blit(sprite, sprite_rect)
 
     def set_sprite(self, image_path):
         try:

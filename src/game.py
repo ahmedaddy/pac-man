@@ -7,6 +7,7 @@ from .components import Button
 from .main_menu import Mainmenu
 from .score_recorder import ScoreRecorder
 import random
+from pathlib import Path
 
 
 class Cell:
@@ -67,10 +68,8 @@ class GameEngine:
             Ghosts(1, self.cols - 1, self.map, self.pacman, 2, config.ORANGE, self),
             Ghosts(self.rows - 2, self.cols - 1, self.map, self.pacman, 1, config.CYAN, self)
         ]
-        from pathlib import Path
 
         assets = Path(__file__).resolve().parent / "assets"
-
         self.pacman.set_sprite(assets / "pac_man.png")
 
         ghost_images = [
@@ -79,9 +78,14 @@ class GameEngine:
             "orange.png",
             "cyan.png"
         ]
-
+        edible_name = "edible_ghost.png"
+        waiting_name = "waiting_ghost.png"
         for ghost, image_name in zip(self.ghosts, ghost_images):
-            ghost.set_sprite(assets / image_name)
+            ghost.load_ghosts_image(
+                assets / image_name, assets / edible_name,
+                assets / waiting_name
+                )
+
         self.running = True
         self.state = "menu"
         self.menu = Mainmenu(self.screen)
@@ -174,7 +178,7 @@ class GameEngine:
             }
             if event.key in directions:
                 self.pacman.set_direction(directions[event.key])
-    
+
     def corrdinates_to_pixels(self, x, y):
         ret_x = (x * config.CELL_SIZE) + config.CELL_SIZE // 2
         ret_y = (y * config.CELL_SIZE) + config.CELL_SIZE // 2
@@ -260,7 +264,6 @@ class GameEngine:
         for corner in self.corners:
             super_pacgums.append(Pacgum(corner[0], corner[1], config.SUPER_GUM_SIZE, 50))
         return super_pacgums
-    
 
     def handle_gums(self):
         all_done = 0

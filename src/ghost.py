@@ -17,6 +17,9 @@ class Ghosts(Player):
         self.speed = speed
         self.edible = False
         self.is_eaten = False
+        self.normal_sprite = None
+        self.edible_sprite = None
+        self.waiting_sprite = None
 
     def ghost_move(self, row, col):
         if self.is_aligned():
@@ -212,3 +215,56 @@ class Ghosts(Player):
                 self.reset_ghost_position()
             else:
                 self.Pacman.lose_life()
+
+    def load_ghosts_image(self, normal_image_path, edible_path, waiting_path):
+
+        size = config.BALL_SIZE * 2
+        try:
+            normal = pygame.image.load(
+                str(normal_image_path)
+            ).convert_alpha()
+
+            edible = pygame.image.load(
+                str(edible_path)
+            ).convert_alpha()
+            waiting = pygame.image.load(
+                str(waiting_path)
+            ).convert_alpha()
+
+            self.normal_sprite = pygame.transform.smoothscale(
+                normal, (size, size)
+            )
+
+            self.edible_sprite = pygame.transform.smoothscale(
+                edible, (size, size)
+            )
+            self.waiting_sprite = pygame.transform.smoothscale(
+                waiting, (size, size)
+            )
+
+        except (pygame.error, OSError) as error:
+            print(f"Error loading ghost sprites: {error}")
+            self.normal_sprite = None
+            self.edible_sprite = None
+
+    def draw(self, screen, offset_x, offset_y):
+        if self.is_eaten:
+            sprite = self.waiting_sprite
+
+        elif self.edible:
+            sprite = self.edible_sprite
+        else:
+            sprite = self.normal_sprite
+
+        # if sprite is None:
+        #     super().draw(screen, offset_x, offset_y)
+        #     return
+
+        center_x = offset_x + self.x + config.CELL_SIZE // 2
+        center_y = offset_y + self.y + config.CELL_SIZE // 2
+
+        sprite_rect = sprite.get_rect(
+            center=(center_x, center_y)
+        )
+
+        screen.blit(sprite, sprite_rect)
