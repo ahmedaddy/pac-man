@@ -67,6 +67,21 @@ class GameEngine:
             Ghosts(1, self.cols - 1, self.map, self.pacman, 2, config.ORANGE, self),
             Ghosts(self.rows - 2, self.cols - 1, self.map, self.pacman, 1, config.CYAN, self)
         ]
+        from pathlib import Path
+
+        assets = Path(__file__).resolve().parent / "assets"
+
+        self.pacman.set_sprite(assets / "pac_man.png")
+
+        ghost_images = [
+            "red.png",
+            "pink.png",
+            "orange.png",
+            "cyan.png"
+        ]
+
+        for ghost, image_name in zip(self.ghosts, ghost_images):
+            ghost.set_sprite(assets / image_name)
         self.running = True
         self.state = "menu"
         self.menu = Mainmenu(self.screen)

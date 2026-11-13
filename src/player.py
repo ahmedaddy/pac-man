@@ -79,9 +79,30 @@ class Player():
         center_x = offset_x + self.x + config.CELL_SIZE // 2
         center_y = offset_y + self.y + config.CELL_SIZE // 2
 
-        pygame.draw.circle(
-            screen,
-            self.color,
-            (center_x, center_y),
-            config.BALL_SIZE
-        )
+        if self.sprite is not None:
+            sprite_rect = self.sprite.get_rect(
+                center=(center_x, center_y)
+            )
+            screen.blit(self.sprite, sprite_rect)
+        else:
+            pygame.draw.circle(
+                screen,
+                self.color,
+                (center_x, center_y),
+                config.BALL_SIZE
+            )
+
+    def set_sprite(self, image_path):
+        try:
+            image = pygame.image.load(image_path).convert_alpha()
+
+            size = config.BALL_SIZE * 2
+
+            self.sprite = pygame.transform.smoothscale(
+                image,
+                (size, size)
+            )
+
+        except (pygame.error, OSError) as error:
+            print(f"Could not load sprite: {error}")
+            self.sprite = None
