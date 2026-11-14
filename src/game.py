@@ -82,10 +82,6 @@ class GameEngine:
             Ghosts(1, len(self.map[0]) - 1, self.map, self.pacman, 2, config.ORANGE, self),
             Ghosts(len(self.map) - 2, len(self.map[0]) - 1, self.map, self.pacman, 1, config.CYAN, self)
         ]
-<<<<<<< HEAD
-
-=======
->>>>>>> bcda4e1 (add levels logic)
         assets = Path(__file__).resolve().parent / "assets"
         self.pacman.set_sprite(assets / "pac_man.png")
         ghost_images = [
@@ -94,7 +90,6 @@ class GameEngine:
             "orange.png",
             "cyan.png"
         ]
-<<<<<<< HEAD
         edible_name = "edible_ghost.png"
         waiting_name = "waiting_ghost.png"
         for ghost, image_name in zip(self.ghosts, ghost_images):
@@ -103,15 +98,7 @@ class GameEngine:
                 assets / waiting_name
                 )
 
-        self.running = True
-        self.state = "menu"
-        self.menu = Mainmenu(self.screen)
-        self.gums = self.generate_pacgums(42)
-=======
-        for ghost, image_name in zip(self.ghosts, ghost_images):
-            ghost.set_sprite(assets / image_name)
         self.gums = self.generate_pacgums(1)
->>>>>>> bcda4e1 (add levels logic)
         self.super_gums = self.generate_supergums()
         self.gums_state = False
         self.super_gum_timer = None
@@ -364,15 +351,5 @@ class GameEngine:
     def handle_death(self):
         if self.pacman.lives == 0:
             self.state = "score"
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        # check if pac man takes all gums
-        if self.gums_state and all(gum.is_eaten for gum in self.super_gums):
-            self.state = "score"
->>>>>>> f8c0116 (fix generate_pacgums)
-=======
-        if self.gums_state:
+        elif self.gums_state:
             self.next_level()
-            # self.state = "score"
->>>>>>> bcda4e1 (add levels logic)
