@@ -36,6 +36,8 @@ class ScoreRecorder:
 
                 if not isinstance(high_scores, dict) or not isinstance(high_scores.get("scores"), list):
                     high_scores = {"scores": []}
+                if score < 0:
+                    score = 0
                 high_scores["scores"].append(
                     {
                         "player_name": player_name,

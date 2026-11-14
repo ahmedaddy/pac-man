@@ -89,7 +89,7 @@ class GameEngine:
         self.running = True
         self.state = "menu"
         self.menu = Mainmenu(self.screen)
-        self.gums = self.generate_pacgums()
+        self.gums = self.generate_pacgums(42)
         self.super_gums = self.generate_supergums()
         self.gums_state = False
         self.super_gum_timer = None
@@ -243,20 +243,22 @@ class GameEngine:
         infos.append(lives)
         return infos
 
-    def generate_pacgums(self):
+    def generate_pacgums(self, number_of_gums):
         pac_gums = []
+        valid_positions = []
         for row, c in enumerate(self.map):
             for col, i in enumerate(c):
                 if self.corrdinates_to_pixels(col, row) in self.corners:
                     continue
                 if not all([i.up, i.down, i.left, i.right]):
-                    chosen_number = random.choices(
-                        [0, 1],
-                        weights=[0, 1.0])[0]
-                    if chosen_number:
-                        gum_x = (col * config.CELL_SIZE) + config.CELL_SIZE // 2
-                        gum_y = (row * config.CELL_SIZE) + config.CELL_SIZE // 2
-                        pac_gums.append(Pacgum(gum_x, gum_y, config.GUM_SIZE, 10))
+                    valid_positions.append((col, row))
+        if len(valid_positions) < number_of_gums:
+            print("Not enough valid positions to place all gums. Placing gums in all valid positions.")
+        chose_positions = random.sample(valid_positions, min(number_of_gums, len(valid_positions)))
+        for pos in chose_positions:
+            gum_x = (pos[0] * config.CELL_SIZE) + config.CELL_SIZE // 2
+            gum_y = (pos[1] * config.CELL_SIZE) + config.CELL_SIZE // 2
+            pac_gums.append(Pacgum(gum_x, gum_y, config.GUM_SIZE, 10))
         return pac_gums
 
     def generate_supergums(self):
@@ -323,3 +325,9 @@ class GameEngine:
     def handle_death(self):
         if self.pacman.lives == 0:
             self.state = "score"
+<<<<<<< HEAD
+=======
+        # check if pac man takes all gums
+        if self.gums_state and all(gum.is_eaten for gum in self.super_gums):
+            self.state = "score"
+>>>>>>> f8c0116 (fix generate_pacgums)

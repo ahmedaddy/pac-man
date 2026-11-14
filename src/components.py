@@ -57,7 +57,7 @@ class Input:
                 self.text = self.text[:-1]
             elif event.key == pygame.K_RETURN:
                 return self.text
-            elif event.unicode.isprintable():
+            elif len(self.text) < 10 and (event.unicode.isalnum() or event.unicode.isspace()):
                 self.text += event.unicode
 
         return None
