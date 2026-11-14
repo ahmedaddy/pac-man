@@ -20,3 +20,8 @@ class config:
     GUM_SIZE = 5
     SUPER_GUM_SIZE = 10
     SUPER_GUM_DURATION = 15000
+    LEVEL_SETTINGS = [
+        {"size": (15, 15), "seed": 42},
+        {"size": (15, 15), "seed": 202},
+        {"size": (15, 15), "seed": 303},
+    ]

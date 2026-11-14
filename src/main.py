@@ -2,25 +2,31 @@ import sys
 from .utils import Utils
 from mazegenerator import MazeGenerator
 from .game import GameEngine
+from .config import config
 
+def create_levels():
+    levels = []
+    for settings in config.LEVEL_SETTINGS:
+        maze = MazeGenerator(
+            size=(settings['size']),
+            perfect=False,
+            entry_cell=(10, 10),
+            exit_cell=(-1, -1),
+            seed=settings["seed"]
+        )
+        maze.generate(settings["seed"])
+        levels.append(maze.maze)
+
+    return levels
 
 class Main:
     def run(self):
         # try:
         file_name = sys.argv[1]
         file = Utils.read_json_file(file_name)
-        Maze = MazeGenerator(
-            size=(file.get('width', 15), file.get('height', 15)),
-            perfect=False,
-            entry_cell=(10, 10),
-            exit_cell=(-1, -1),
-            seed=999
-            )
-        Maze.generate(999)
-        game = GameEngine(Maze.maze)
+        levels = create_levels()
+        game = GameEngine(levels)
         game.gameLoop()
-        print(f"Processing file: {file.get('seed', 42)}")
-        print(f"Generated maze: {Maze.maze}")
         # except Exception as e:
         #     print(f"An error occurred: {e}", file=sys.stderr)
         #     sys.exit(1)

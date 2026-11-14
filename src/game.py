@@ -32,11 +32,26 @@ class Pacgum:
 
 
 class GameEngine:
-    def __init__(self, map_data):
+    def __init__(self, levels):
         """Initialize the game."""
         pygame.init()
         pygame.display.set_caption("PAC MAN")
+        self.screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
         self.clock = pygame.time.Clock()
+        self.running = True
+
+        self.menu = Mainmenu(self.screen)
+        self.level = 1
+        self.score_recorder = ScoreRecorder(self.screen)
+        self.state = "menu"
+        self.levels = levels
+
+        self.load_level(self.levels[0])
+
+    def load_level(self, map_data):
+        old_pacman = getattr(self, "pacman", None)
+        saved_score = old_pacman.score if old_pacman else 0
+        saved_lives = old_pacman.lives if old_pacman else 3
         self.map = [
             [Cell(cell) for cell in row]
             for row in map_data
@@ -51,7 +66,6 @@ class GameEngine:
             self.corrdinates_to_pixels(len(self.map) - 1, 0),
             self.corrdinates_to_pixels(len(self.map) - 1, len(self.map[0]) - 1)
         ]
-        self.screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
         self.pacman_starts_positions = (len(self.map) // 2, len(self.map[0]) // 2)
         # spawn pacman at the center of the maze
         self.pacman = Pacman(
@@ -60,24 +74,27 @@ class GameEngine:
             self.map,
             config.YELLOW
         )
-        self.rows = len(self.map)
-        self.cols = len(self.map[0])
+        self.pacman.score = saved_score
+        self.pacman.lives = saved_lives
         self.ghosts = [
             Ghosts(1, 0, self.map, self.pacman, 2, config.RED, self),
-            Ghosts(self.rows - 1, 1, self.map, self.pacman, 2, config.PINK, self),
-            Ghosts(1, self.cols - 1, self.map, self.pacman, 2, config.ORANGE, self),
-            Ghosts(self.rows - 2, self.cols - 1, self.map, self.pacman, 1, config.CYAN, self)
+            Ghosts(len(self.map) - 1, 1, self.map, self.pacman, 2, config.PINK, self),
+            Ghosts(1, len(self.map[0]) - 1, self.map, self.pacman, 2, config.ORANGE, self),
+            Ghosts(len(self.map) - 2, len(self.map[0]) - 1, self.map, self.pacman, 1, config.CYAN, self)
         ]
+<<<<<<< HEAD
 
+=======
+>>>>>>> bcda4e1 (add levels logic)
         assets = Path(__file__).resolve().parent / "assets"
         self.pacman.set_sprite(assets / "pac_man.png")
-
         ghost_images = [
             "red.png",
             "pink.png",
             "orange.png",
             "cyan.png"
         ]
+<<<<<<< HEAD
         edible_name = "edible_ghost.png"
         waiting_name = "waiting_ghost.png"
         for ghost, image_name in zip(self.ghosts, ghost_images):
@@ -90,10 +107,29 @@ class GameEngine:
         self.state = "menu"
         self.menu = Mainmenu(self.screen)
         self.gums = self.generate_pacgums(42)
+=======
+        for ghost, image_name in zip(self.ghosts, ghost_images):
+            ghost.set_sprite(assets / image_name)
+        self.gums = self.generate_pacgums(1)
+>>>>>>> bcda4e1 (add levels logic)
         self.super_gums = self.generate_supergums()
         self.gums_state = False
         self.super_gum_timer = None
-        self.score_recorder = ScoreRecorder(self.screen)
+
+    def next_level(self):
+        if self.level >= len(self.levels):
+            self.state = "score"
+            return
+        self.level += 1
+        self.load_level(self.levels[self.level - 1])
+
+    def start_new_game(self):
+        self.level = 1
+        self.pacman.score = 0
+        self.pacman.lives = 3
+        self.load_level(self.levels[0])
+        self.state = "game"
+
 
     def exit(self):
         """Stop the game."""
@@ -158,7 +194,7 @@ class GameEngine:
             elif self.state == "menu":
                 res = self.menu.handle_event(event)
                 if res == "game":
-                    self.state = "game"
+                    self.start_new_game()
                 if res == "quit":
                     self.running = False
             elif self.state == "score":
@@ -167,6 +203,7 @@ class GameEngine:
                     self.state = "menu"
             if self.state == "score":
                 self.state = "score"
+
 
     def handle_game_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -241,6 +278,8 @@ class GameEngine:
         infos.append(score)
         lives = Button(config.WIDTH // 2 + 120, 0, 40, 20, f"lives: {self.pacman.lives}", "black", "black", "white")
         infos.append(lives)
+        levels = Button(config.WIDTH // 2 - 120, 0, 40, 20, f"Level: {self.level}", "black", "black", "white")
+        infos.append(levels)
         return infos
 
     def generate_pacgums(self, number_of_gums):
@@ -326,8 +365,14 @@ class GameEngine:
         if self.pacman.lives == 0:
             self.state = "score"
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         # check if pac man takes all gums
         if self.gums_state and all(gum.is_eaten for gum in self.super_gums):
             self.state = "score"
 >>>>>>> f8c0116 (fix generate_pacgums)
+=======
+        if self.gums_state:
+            self.next_level()
+            # self.state = "score"
+>>>>>>> bcda4e1 (add levels logic)
