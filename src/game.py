@@ -62,11 +62,14 @@ class GameEngine:
         self.offset_y = (config.HEIGHT - self.maze_height) // 2
         self.corners = [
             self.corrdinates_to_pixels(0, 0),
-            self.corrdinates_to_pixels(0, len(self.map[0]) - 1),
-            self.corrdinates_to_pixels(len(self.map) - 1, 0),
-            self.corrdinates_to_pixels(len(self.map) - 1, len(self.map[0]) - 1)
+            self.corrdinates_to_pixels(len(self.map[0]) - 1, 0),
+            self.corrdinates_to_pixels(0, len(self.map) - 1),
+            self.corrdinates_to_pixels(
+                len(self.map[0]) - 1,
+                len(self.map) - 1
+            )
         ]
-        self.pacman_starts_positions = (len(self.map) // 2, len(self.map[0]) // 2)
+        self.pacman_starts_positions = self.find_pacman_start_position()
         # spawn pacman at the center of the maze
         self.pacman = Pacman(
             self.pacman_starts_positions[0],
@@ -102,6 +105,7 @@ class GameEngine:
         self.super_gums = self.generate_supergums()
         self.gums_state = False
         self.super_gum_timer = None
+        self.start_time = pygame.time.get_ticks()
 
     def next_level(self):
         if self.level >= len(self.levels):
@@ -116,6 +120,11 @@ class GameEngine:
         self.pacman.lives = 3
         self.load_level(self.levels[0])
         self.state = "game"
+
+    def time_remaining(self):
+        limit = config.LEVEL_TIMER
+        elapsed = pygame.time.get_ticks() - self.start_time
+        return max(0, limit - elapsed // 1000)
 
 
     def exit(self):
@@ -267,6 +276,8 @@ class GameEngine:
         infos.append(lives)
         levels = Button(config.WIDTH // 2 - 120, 0, 40, 20, f"Level: {self.level}", "black", "black", "white")
         infos.append(levels)
+        timer = Button(config.WIDTH // 2 - 240, 0, 40, 20, f"Time: {self.time_remaining()}", "black", "black", "white")
+        infos.append(timer)
         return infos
 
     def generate_pacgums(self, number_of_gums):
@@ -349,7 +360,21 @@ class GameEngine:
                 self.super_gum_timer = None
 
     def handle_death(self):
-        if self.pacman.lives == 0:
+        if self.pacman.lives == 0 or self.time_remaining() == 0:
             self.state = "score"
         elif self.gums_state:
             self.next_level()
+
+    def find_pacman_start_position(self):
+        center_row = len(self.map) // 2
+        center_col = len(self.map[0]) // 2
+        valid_cells = [
+            (row, col)
+            for row, cells in enumerate(self.map)
+            for col, cell in enumerate(cells)
+            if not (cell.up and cell.right and cell.down and cell.left)
+        ]
+        return min(
+            valid_cells,
+            key=lambda pos: abs(pos[0] - center_row) + abs(pos[1] - center_col)
+        )

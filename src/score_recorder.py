@@ -47,6 +47,7 @@ class ScoreRecorder:
                 with score_file.open("w", encoding="utf-8") as f:
                     json.dump(high_scores, f, indent=2)
                 print(f"Score recorded for {player_name}")
+                self.input.text = ""
                 # stop the game or return to main menu after recording the score
                 return "menu"
             else:

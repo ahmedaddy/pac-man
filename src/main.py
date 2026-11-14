@@ -10,11 +10,10 @@ def create_levels():
         maze = MazeGenerator(
             size=(settings['size']),
             perfect=False,
-            entry_cell=(10, 10),
+            entry_cell=(1, 1),
             exit_cell=(-1, -1),
             seed=settings["seed"]
         )
-        maze.generate(settings["seed"])
         levels.append(maze.maze)
 
     return levels
@@ -25,6 +24,7 @@ class Main:
         file_name = sys.argv[1]
         file = Utils.read_json_file(file_name)
         levels = create_levels()
+        print(levels[0])
         game = GameEngine(levels)
         game.gameLoop()
         # except Exception as e:
