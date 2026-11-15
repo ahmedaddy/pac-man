@@ -146,9 +146,15 @@ class GameEngine:
                 self.pacman.move()
                 if not self.gums_state:
                     for gum in self.gums:
-                        gum.draw(screen=self.screen, offset_x=self.offset_x, offset_y=self.offset_y)
+                        gum.draw(
+                            screen=self.screen,
+                            offset_x=self.offset_x,
+                            offset_y=self.offset_y)
                 for gum in self.super_gums:
-                    gum.draw(screen=self.screen, offset_x=self.offset_x, offset_y=self.offset_y)
+                    gum.draw(
+                        screen=self.screen,
+                        offset_x=self.offset_x,
+                        offset_y=self.offset_y)
                 for info in self.infos():
                     info.draw(screen=self.screen)
                 self.handle_gums()
@@ -171,7 +177,9 @@ class GameEngine:
                         self.ghosts[3].go_next_pacman()
                     else:
                         for ghost in self.ghosts:
-                            ghost.ghost_move(ghost.start_position[0], ghost.start_position[1])
+                            ghost.ghost_move(
+                                ghost.start_position[0],
+                                ghost.start_position[1])
                 self.cheat.draw()
                 self.handle_death()
                 # self.drawPacman()
@@ -204,7 +212,8 @@ class GameEngine:
                 if res == "quit":
                     self.running = False
             elif self.state == "score":
-                rest = self.score_recorder.handle_event(event, self.pacman.score)
+                rest = self.score_recorder.handle_event(
+                    event, self.pacman.score)
                 if rest == "menu":
                     self.state = "menu"
             if self.state == "score":
@@ -299,8 +308,10 @@ class GameEngine:
                 if not all([i.up, i.down, i.left, i.right]):
                     valid_positions.append((col, row))
         if len(valid_positions) < number_of_gums:
-            print("Not enough valid positions to place all gums. Placing gums in all valid positions.")
-        chose_positions = random.sample(valid_positions, min(number_of_gums, len(valid_positions)))
+            print("Not enough valid positions to place all gums. Placing gums \
+in all valid positions.")
+        chose_positions = random.sample(valid_positions, min(
+            number_of_gums, len(valid_positions)))
         for pos in chose_positions:
             gum_x = (pos[0] * config.CELL_SIZE) + config.CELL_SIZE // 2
             gum_y = (pos[1] * config.CELL_SIZE) + config.CELL_SIZE // 2
@@ -310,7 +321,8 @@ class GameEngine:
     def generate_supergums(self):
         super_pacgums = []
         for corner in self.corners:
-            super_pacgums.append(Pacgum(corner[0], corner[1], config.SUPER_GUM_SIZE, 50))
+            super_pacgums.append(
+                Pacgum(corner[0], corner[1], config.SUPER_GUM_SIZE, 50))
         return super_pacgums
 
     def handle_gums(self):
