@@ -81,6 +81,10 @@ class GameEngine:
             self.map,
             config.YELLOW
         )
+        self.pacman.pacman_starts_positions = (
+            self.pacman_starts_positions[0],
+            self.pacman_starts_positions[1]
+        )
         self.pacman.score = saved_score
         self.pacman.lives = saved_lives
         self.ghosts = [
