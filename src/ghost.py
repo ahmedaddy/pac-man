@@ -212,8 +212,9 @@ class Ghosts(Player):
         if ghost_rect.colliderect(pac_man_rect):
             if self.edible:
                 self.is_eaten = True
+                self.Pacman.score += 20
                 self.reset_ghost_position()
-            else:
+            elif not self.GameEngine.cheat.flags["invincibility"]:
                 self.Pacman.lose_life()
 
     def load_ghosts_image(self, normal_image_path, edible_path, waiting_path):

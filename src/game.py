@@ -8,6 +8,7 @@ from .main_menu import Mainmenu
 from .score_recorder import ScoreRecorder
 import random
 from pathlib import Path
+from .cheat_mode import CheatMode
 
 
 class Cell:
@@ -47,6 +48,8 @@ class GameEngine:
         self.levels = levels
 
         self.load_level(self.levels[0])
+
+        self.cheat = CheatMode(self.screen)
 
     def load_level(self, map_data):
         old_pacman = getattr(self, "pacman", None)
@@ -112,6 +115,7 @@ class GameEngine:
             self.state = "score"
             return
         self.level += 1
+        self.cheat.flags['skip'] = False
         self.load_level(self.levels[self.level - 1])
 
     def start_new_game(self):
@@ -125,7 +129,6 @@ class GameEngine:
         limit = config.LEVEL_TIMER
         elapsed = pygame.time.get_ticks() - self.start_time
         return max(0, limit - elapsed // 1000)
-
 
     def exit(self):
         """Stop the game."""
@@ -157,14 +160,18 @@ class GameEngine:
                     if ghost.is_eaten:
                         continue
                     ghost.ghost_in_edible()
-                if not ghost.edible:
-                    self.ghosts[0].tracking_pacman()
-                    self.ghosts[1].move_random_direction()
-                    self.ghosts[2].move_random_direction()
-                    self.ghosts[3].go_next_pacman()
-                else:
-                    for ghost in self.ghosts:
-                        ghost.ghost_move(ghost.start_position[0], ghost.start_position[1])
+                if self.cheat.flags['skip']:
+                    self.next_level()
+                if not self.cheat.flags["freeze"]:
+                    if not ghost.edible:
+                        self.ghosts[0].tracking_pacman()
+                        self.ghosts[1].move_random_direction()
+                        self.ghosts[2].move_random_direction()
+                        self.ghosts[3].go_next_pacman()
+                    else:
+                        for ghost in self.ghosts:
+                            ghost.ghost_move(ghost.start_position[0], ghost.start_position[1])
+                self.cheat.draw()
                 self.handle_death()
                 # self.drawPacman()
             if self.state == "score":
@@ -186,6 +193,8 @@ class GameEngine:
             if event.type == pygame.QUIT:
                 self.exit()
             if self.state == "game":
+                if self.cheat.hundle_event(event):
+                    continue
                 self.handle_game_event(event)
             elif self.state == "menu":
                 res = self.menu.handle_event(event)
@@ -199,7 +208,6 @@ class GameEngine:
                     self.state = "menu"
             if self.state == "score":
                 self.state = "score"
-
 
     def handle_game_event(self, event):
         if event.type == pygame.KEYDOWN:

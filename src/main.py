@@ -4,6 +4,7 @@ from mazegenerator import MazeGenerator
 from .game import GameEngine
 from .config import config
 
+
 def create_levels():
     levels = []
     for settings in config.LEVEL_SETTINGS:
@@ -17,6 +18,7 @@ def create_levels():
         levels.append(maze.maze)
 
     return levels
+
 
 class Main:
     def run(self):
