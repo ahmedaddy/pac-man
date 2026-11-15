@@ -45,6 +45,7 @@ class GameEngine:
         self.score_recorder = ScoreRecorder(self.screen)
         self.state = "menu"
         self.levels = levels
+        self.pause = False
 
         self.load_level(self.levels[0])
 
@@ -135,40 +136,50 @@ class GameEngine:
         """Run the main game loop."""
 
         while self.running:
-            if self.state == "menu":
-                self.menu.draw()
-            elif self.state == "game":
-                self.screen.fill("#001219")
-                self.pacman.move()
-                if not self.gums_state:
-                    for gum in self.gums:
+            if not self.pause:
+                if self.state == "menu":
+                    self.menu.draw()
+                elif self.state == "game":
+                    self.screen.fill("#001219")
+                    self.pacman.move()
+                    if not self.gums_state:
+                        for gum in self.gums:
+                            gum.draw(screen=self.screen, offset_x=self.offset_x, offset_y=self.offset_y)
+                    for gum in self.super_gums:
                         gum.draw(screen=self.screen, offset_x=self.offset_x, offset_y=self.offset_y)
-                for gum in self.super_gums:
-                    gum.draw(screen=self.screen, offset_x=self.offset_x, offset_y=self.offset_y)
-                for info in self.infos():
-                    info.draw(screen=self.screen)
-                self.handle_gums()
-                self.handle_super_pacgums()
-                self.update_super_gum_timer()
-                self.draw_walls()
-                self.pacman.draw(self.screen, self.offset_x, self.offset_y)
-                for ghost in self.ghosts:
-                    ghost.draw(self.screen, self.offset_x, self.offset_y)
-                    if ghost.is_eaten:
-                        continue
-                    ghost.ghost_in_edible()
-                if not ghost.edible:
-                    self.ghosts[0].tracking_pacman()
-                    self.ghosts[1].move_random_direction()
-                    self.ghosts[2].move_random_direction()
-                    self.ghosts[3].go_next_pacman()
-                else:
+                    for info in self.infos():
+                        info.draw(screen=self.screen)
+                    self.handle_gums()
+                    self.handle_super_pacgums()
+                    self.update_super_gum_timer()
+                    self.draw_walls()
+                    self.pacman.draw(self.screen, self.offset_x, self.offset_y)
                     for ghost in self.ghosts:
-                        ghost.ghost_move(ghost.start_position[0], ghost.start_position[1])
-                self.handle_death()
-                # self.drawPacman()
-            if self.state == "score":
-                self.score_recorder.draw(self.pacman.score)
+                        ghost.draw(self.screen, self.offset_x, self.offset_y)
+                        if ghost.is_eaten:
+                            continue
+                        ghost.ghost_in_edible()
+                    if not ghost.edible:
+                        self.ghosts[0].tracking_pacman()
+                        self.ghosts[1].move_random_direction()
+                        self.ghosts[2].move_random_direction()
+                        self.ghosts[3].go_next_pacman()
+                    else:
+                        for ghost in self.ghosts:
+                            ghost.ghost_move(ghost.start_position[0], ghost.start_position[1])
+                    self.handle_death()
+                    # self.drawPacman()
+                if self.state == "score":
+                    self.score_recorder.draw(self.pacman.score)
+            else:
+                self.screen.fill("#001219")
+                pause_text = Button(config.WIDTH // 2, config.HEIGHT // 2, 40, 20, "Game Paused", "black", "black", "white")
+                pause_text.draw(self.screen)
+                resume_button = Button(config.WIDTH // 2, config.HEIGHT // 2 + 50, 40, 20, "Resume", "black", "black", "white")
+                resume_button.draw(self.screen)
+                quit_button = Button(config.WIDTH // 2, config.HEIGHT // 2 + 100, 40, 20, "Quit", "black", "black", "white")
+                quit_button.draw(self.screen)
+
             pygame.display.flip()
             self.clock.tick(40)
             self.handleEvents()
@@ -182,6 +193,8 @@ class GameEngine:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         self.exit()
+                    if event.key == pygame.K_p:
+                        self.pause = not self.pause
 
             if event.type == pygame.QUIT:
                 self.exit()
