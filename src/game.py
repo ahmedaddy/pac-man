@@ -46,6 +46,7 @@ class GameEngine:
         self.score_recorder = ScoreRecorder(self.screen)
         self.state = "menu"
         self.levels = levels
+        self.pause = False
 
         self.load_level(self.levels[0])
 
