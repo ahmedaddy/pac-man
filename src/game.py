@@ -331,7 +331,7 @@ class GameEngine:
                 )
                 if gum_rect.colliderect(pac_man_rect):
                     gum.is_eaten = True
-                    self.pacman.score += 10
+                    self.pacman.score += 5
         if all_done == 0:
             self.gums_state = True
 
@@ -352,6 +352,7 @@ class GameEngine:
                 )
                 if gum_rect.colliderect(pac_man_rect):
                     gum.is_eaten = True
+                    self.pacman.score += 10
                     for ghost in self.ghosts:
                         ghost.edible = True
                     self.super_gum_timer = pygame.time.get_ticks()
