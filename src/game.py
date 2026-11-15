@@ -51,6 +51,7 @@ class GameEngine:
         self.load_level(self.levels[0])
 
         self.cheat = CheatMode(self.screen)
+        self.stop_timer = None
 
     def load_level(self, map_data):
         old_pacman = getattr(self, "pacman", None)
@@ -212,8 +213,14 @@ class GameEngine:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         self.exit()
-                    if event.key == pygame.K_p:
+                    if event.key == pygame.K_p and self.state == "game":
                         self.pause = not self.pause
+                        if self.pause:
+                            self.stop_timer = pygame.time.get_ticks()
+                        else:
+                            if self.stop_timer is not None:
+                                self.start_time += (pygame.time.get_ticks() - self.stop_timer)
+                            self.stop_timer = None
 
             if event.type == pygame.QUIT:
                 self.exit()
