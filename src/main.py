@@ -26,7 +26,7 @@ class Main:
         file_name = sys.argv[1]
         file = Utils.read_json_file(file_name)
         levels = create_levels()
-        print(levels[0])
+        # print(levels[0])
         game = GameEngine(levels)
         game.gameLoop()
         # except Exception as e:
