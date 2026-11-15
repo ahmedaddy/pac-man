@@ -115,7 +115,19 @@ class GameEngine:
         self.gums_state = False
         self.super_gum_timer = None
         self.start_time = pygame.time.get_ticks()
+        self.resume_button = Button(
+            config.WIDTH // 2 - 140 // 2,
+            config.HEIGHT // 2 - 40 // 2 + 25,
+            140, 40,
+            "Resume", "black", "red", "white"
+        )
 
+        self.quit_button = Button(
+            config.WIDTH // 2 - 140 // 2,
+            config.HEIGHT // 2 - 40 // 2 + 75,
+            140, 40,
+            "Quit", "black", "red", "white"
+        )
     def next_level(self):
         if self.level >= len(self.levels):
             self.state = "score"
@@ -193,12 +205,15 @@ class GameEngine:
                     self.score_recorder.draw(self.pacman.score)
             else:
                 self.screen.fill("#001219")
-                pause_text = Button(config.WIDTH // 2, config.HEIGHT // 2, 40, 20, "Game Paused", "black", "black", "white")
+                pause_text = Button(
+                    config.WIDTH // 2 - 40,
+                    config.HEIGHT // 2 - 70,
+                    80, 20,
+                    "Game Paused", "black", "black", "white"
+                )
                 pause_text.draw(self.screen)
-                resume_button = Button(config.WIDTH // 2, config.HEIGHT // 2 + 50, 40, 20, "Resume", "black", "black", "white")
-                resume_button.draw(self.screen)
-                quit_button = Button(config.WIDTH // 2, config.HEIGHT // 2 + 100, 40, 20, "Quit", "black", "black", "white")
-                quit_button.draw(self.screen)
+                self.resume_button.draw(self.screen)
+                self.quit_button.draw(self.screen)
 
             pygame.display.flip()
             self.clock.tick(40)
@@ -221,7 +236,11 @@ class GameEngine:
                             if self.stop_timer is not None:
                                 self.start_time += (pygame.time.get_ticks() - self.stop_timer)
                             self.stop_timer = None
-
+            if self.pause:
+                if self.resume_button.handle_button_events(event):
+                    self.pause = False
+                if self.quit_button.handle_button_events(event):
+                    self.running = False
             if event.type == pygame.QUIT:
                 self.exit()
             if self.state == "game":
@@ -405,7 +424,7 @@ in all valid positions.")
                 self.super_gum_timer = None
 
     def handle_death(self):
-        if self.pacman.lives == 0 or self.time_remaining() == 0:
+        if self.pacman.lives == 0 or self.time_remaining() == 0 and not self.pause:
             self.state = "score"
         elif self.gums_state:
             self.next_level()

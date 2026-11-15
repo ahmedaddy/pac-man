@@ -25,4 +25,4 @@ class config:
         {"size": (17, 17), "seed": 202},
         {"size": (30, 30), "seed": 303},
     ]
-    LEVEL_TIMER = 90
+    LEVEL_TIMER = 5
