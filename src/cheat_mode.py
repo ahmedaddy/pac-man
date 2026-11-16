@@ -9,7 +9,8 @@ class CheatMode():
         self.flags = {
             "invincibility": False,
             "freeze": False,
-            "skip": False
+            "skip": False,
+            "increase_speed": False
         }
 
         self.font = pygame.font.Font(None, 26)
@@ -21,7 +22,7 @@ class CheatMode():
 
         # Main panel
         self.panel_rect = pygame.Rect(
-            screen.get_width() - 290, 55, 275, 180
+            screen.get_width() - 240, 55, 240, 220
         )
 
         # Clickable rows
@@ -38,7 +39,8 @@ class CheatMode():
         self.labels = {
             "invincibility": "Invincibility",
             "freeze": "Freeze Ghosts",
-            "skip": "Skip This Level"
+            "skip": "Skip This Level",
+            "increase_speed": "High Speed 300km/h"
         }
 
     def hundle_event(self, event):

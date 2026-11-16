@@ -9,7 +9,7 @@ class Player():
         self.map = map_data
         self.GameEngine = None
 
-        self.speed = 4
+        self.speed = config.PLAYER_SPEED
         self.direction = None
         self.desired_direction = None
         self.color = color

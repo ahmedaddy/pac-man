@@ -164,6 +164,10 @@ class GameEngine:
                     self.menu.draw()
                 elif self.state == "game":
                     self.screen.fill("#001219")
+                    if self.cheat.flags["increase_speed"]:
+                        self.pacman.speed += 1
+                    else:
+                        self.pacman.speed = config.PLAYER_SPEED
                     self.pacman.move()
                     if not self.gums_state:
                         for gum in self.gums:
