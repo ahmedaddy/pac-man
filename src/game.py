@@ -82,7 +82,7 @@ class GameEngine:
             self.pacman_starts_positions[0],
             self.pacman_starts_positions[1],
             self.map,
-            config.YELLOW
+            config.YELLOW,
         )
         self.pacman.pacman_starts_positions = (
             self.pacman_starts_positions[0],
@@ -165,7 +165,7 @@ class GameEngine:
                 elif self.state == "game":
                     self.screen.fill("#001219")
                     if self.cheat.flags["increase_speed"]:
-                        self.pacman.speed += 1
+                        self.pacman.speed = config.PLAYER_SPEED * 4
                     else:
                         self.pacman.speed = config.PLAYER_SPEED
                     self.pacman.move()
@@ -207,7 +207,6 @@ class GameEngine:
                                     ghost.start_position[1])
                     self.cheat.draw()
                     self.handle_death()
-                    # self.drawPacman()
                 if self.state == "score":
                     self.score_recorder.draw(self.pacman.score)
             else:
@@ -323,17 +322,6 @@ class GameEngine:
                         (x, y + config.CELL_SIZE),
                         5
                     )
-
-    def drawPacman(self):
-        center_x = self.offset_x + self.pacman.x + config.CELL_SIZE // 2
-        center_y = self.offset_y + self.pacman.y + config.CELL_SIZE // 2
-
-        pygame.draw.circle(
-            self.screen,
-            config.YELLOW,
-            (center_x, center_y),
-            config.BALL_SIZE
-        )
 
     def infos(self):
         infos = []

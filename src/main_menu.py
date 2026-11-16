@@ -74,10 +74,12 @@ class Mainmenu:
 
         elif self.page == "highscores":
             self.draw_highscores()
+        elif self.page == "instruction":
+            self.draw_instruction()
 
     def handle_event(self, event):
 
-        if self.page == "highscores":
+        if self.page == "highscores" or self.page == "instruction":
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -103,17 +105,17 @@ class Mainmenu:
                     )
                     self.page = "highscores"
                     return None
+                elif self.instructions_rect.collidepoint(event.pos):
+                    self.page = "instruction"
 
                 if self.quit_game_rect.collidepoint(event.pos):
                     return "quit"
 
         return None
 
-    def draw_highscores(self):
-
+    def init_inst_scr_page(self, title):
         width, height = self.screen.get_size()
 
-        # Dark transparent overlay
         overlay = pygame.Surface(
             (width, height),
             pygame.SRCALPHA
@@ -121,11 +123,10 @@ class Mainmenu:
         overlay.fill((0, 0, 0, 230))
         self.screen.blit(overlay, (0, 0))
 
-        # Title
         title_font = pygame.font.SysFont(None, 50)
 
         title = title_font.render(
-            "TOP 10 HIGHSCORES",
+            title,
             True,
             config.YELLOW
         )
@@ -135,6 +136,38 @@ class Mainmenu:
         )
 
         self.screen.blit(title, title_rect)
+
+        pygame.draw.rect(
+            self.screen,
+            config.DARK_BLUE,
+            self.back_rect,
+            border_radius=8
+        )
+
+        pygame.draw.rect(
+            self.screen,
+            config.YELLOW,
+            self.back_rect,
+            width=2,
+            border_radius=8
+        )
+
+        back_text = self.font.render(
+            "BACK",
+            True,
+            config.YELLOW
+        )
+
+        self.screen.blit(
+            back_text,
+            back_text.get_rect(
+                center=self.back_rect.center
+            )
+        )
+
+    def draw_highscores(self):
+
+        self.init_inst_scr_page("TOP 10 HIGHSCORES")
 
         # Read and sort scores
         scores = self.scores.get("scores", [])
@@ -179,35 +212,6 @@ class Mainmenu:
 
             self.screen.blit(text_surface, text_rect)
 
-        # Back button
-        pygame.draw.rect(
-            self.screen,
-            config.DARK_BLUE,
-            self.back_rect,
-            border_radius=8
-        )
-
-        pygame.draw.rect(
-            self.screen,
-            config.YELLOW,
-            self.back_rect,
-            width=2,
-            border_radius=8
-        )
-
-        back_text = self.font.render(
-            "BACK",
-            True,
-            config.YELLOW
-        )
-
-        self.screen.blit(
-            back_text,
-            back_text.get_rect(
-                center=self.back_rect.center
-            )
-        )
-
     def draw_hover(self, rect):
         mouse_pos = pygame.mouse.get_pos()
 
@@ -224,3 +228,6 @@ class Mainmenu:
                 hover,
                 rect.topleft
             )
+
+    def draw_instruction(self):
+        self.init_inst_scr_page("Game Instruction ")

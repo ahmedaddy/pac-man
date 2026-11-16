@@ -25,6 +25,6 @@ class config:
     LEVEL_SETTINGS = [
         {"size": (15, 15), "seed": 42},
         {"size": (17, 17), "seed": 202},
-        {"size": (30, 30), "seed": 303},
+        {"size": (18, 14), "seed": 303},
     ]
     LEVEL_TIMER = 90

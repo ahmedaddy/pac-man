@@ -4,6 +4,7 @@ from .config import config
 import json
 from pathlib import Path
 
+
 class ScoreRecorder:
     def __init__(self, screen):
         # pygame.init()
@@ -21,7 +22,6 @@ class ScoreRecorder:
         self.screen.blit(text_surface, text_rect)
         self.input.draw(self.screen)
         self.submit_button.draw(self.screen)
-
 
     def handle_event(self, event, score):
         if self.submit_button.handle_button_events(event):
@@ -54,4 +54,3 @@ class ScoreRecorder:
                 print("Please enter a name before submitting.")
         self.input.handle_event(event)
         return None
-
