@@ -47,11 +47,13 @@ class GameEngine:
         self.state = "menu"
         self.levels = levels
         self.pause = False
+        self.pause_started_at = None
 
         self.load_level(self.levels[0])
 
         self.cheat = CheatMode(self.screen)
         self.stop_timer = None
+        self.remaining_supergum_effect = None
 
     def load_level(self, map_data):
         old_pacman = getattr(self, "pacman", None)
@@ -128,6 +130,7 @@ class GameEngine:
             140, 40,
             "Quit", "black", "red", "white"
         )
+
     def next_level(self):
         if self.level >= len(self.levels):
             self.state = "score"
@@ -229,7 +232,7 @@ class GameEngine:
                     if event.key == pygame.K_q:
                         self.exit()
                     if event.key == pygame.K_p and self.state == "game":
-                        self.pause = not self.pause
+                        self.hundle_pause()
                         if self.pause:
                             self.stop_timer = pygame.time.get_ticks()
                         else:
@@ -410,18 +413,20 @@ in all valid positions.")
                     self.pacman.score += 10
                     for ghost in self.ghosts:
                         ghost.edible = True
+                        self.remaining_supergum_effect = config.SUPER_GUM_DURATION
                     self.super_gum_timer = pygame.time.get_ticks()
 
     def update_super_gum_timer(self):
-        if self.super_gum_timer is not None:
-            current_time = pygame.time.get_ticks()
+        if self.super_gum_timer is None or self.pause:
+            return
+        current_time = pygame.time.get_ticks()
+        spent_time = current_time - self.super_gum_timer
 
-            if current_time - self.super_gum_timer >= config.SUPER_GUM_DURATION:
-                for ghost in self.ghosts:
-                    ghost.edible = False
-                    ghost.is_eaten = False
-
-                self.super_gum_timer = None
+        if spent_time >= self.remaining_supergum_effect:
+            for ghost in self.ghosts:
+                ghost.edible = False
+                ghost.is_eaten = False
+            self.super_gum_timer = None
 
     def handle_death(self):
         if self.pacman.lives == 0 or self.time_remaining() == 0 and not self.pause:
@@ -442,3 +447,21 @@ in all valid positions.")
             valid_cells,
             key=lambda pos: abs(pos[0] - center_row) + abs(pos[1] - center_col)
         )
+
+    def hundle_pause(self):
+        current_time = pygame.time.get_ticks()
+
+        if not self.pause:
+            self.pause = True
+            self.pause_started_at = current_time
+
+        else:
+            self.pause = False
+            if self.pause_started_at is not None:
+                paused_duration = (
+                    current_time - self.pause_started_at
+                )
+                if self.super_gum_timer is not None:
+                    self.super_gum_timer += paused_duration
+
+                self.pause_started_at = None
