@@ -3,7 +3,7 @@ import pygame
 from .config import config
 from .pacman import Pacman
 from .ghost import Ghosts
-from .components import Button
+from .components import Button, Notification
 from .main_menu import Mainmenu
 from .score_recorder import ScoreRecorder
 import random
@@ -382,8 +382,8 @@ in all valid positions.")
                     config.CELL_SIZE
                 )
                 gum_rect = pygame.Rect(
-                    gum.x - config.GUM_SIZE,
-                    gum.y - config.GUM_SIZE,
+                    gum.x - config.GUM_SIZE // 2,
+                    gum.y - config.GUM_SIZE // 2,
                     config.GUM_SIZE,
                     config.GUM_SIZE
                 )

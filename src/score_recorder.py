@@ -1,5 +1,5 @@
 import pygame
-from .components import Input, Button
+from .components import Input, Button, Notification
 from .config import config
 import json
 from pathlib import Path
@@ -12,6 +12,7 @@ class ScoreRecorder:
         self.input = Input((config.WIDTH // 2) - 200 / 2, (config.HEIGHT // 2) - 50 / 2, 200, 50)
         self.font = pygame.font.SysFont(None, 32)
         self.submit_button = Button((config.WIDTH // 2) - 100 / 2, (config.HEIGHT // 2) - 50 / 2 + 100, 100, 50, "Submit", "blue", "lightblue", "white")
+        self.notification = None
 
     def draw(self, score):
         self.screen.fill("#001219")
@@ -21,6 +22,9 @@ class ScoreRecorder:
         self.screen.blit(text_surface, text_rect)
         self.input.draw(self.screen)
         self.submit_button.draw(self.screen)
+        if self.notification:
+            self.notification.draw(self.screen)
+
 
 
     def handle_event(self, event, score):
@@ -51,6 +55,7 @@ class ScoreRecorder:
                 # stop the game or return to main menu after recording the score
                 return "menu"
             else:
+                self.notification = Notification("Please enter a name before submitting.", "black", "black", "red")
                 print("Please enter a name before submitting.")
         self.input.handle_event(event)
         return None
