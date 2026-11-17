@@ -134,6 +134,7 @@ class GameEngine:
     def next_level(self):
         if self.level >= len(self.levels):
             self.state = "score"
+            self.level = 1
             return
         self.level += 1
         self.cheat.flags['skip'] = False
@@ -423,7 +424,7 @@ in all valid positions.")
     def handle_death(self):
         if self.pacman.lives == 0 or self.time_remaining() == 0 and not self.pause:
             self.state = "score"
-        elif self.gums_state:
+        elif self.gums_state and all(gum.is_eaten for gum in self.super_gums) and not self.pause:
             self.next_level()
 
     def find_pacman_start_position(self):
