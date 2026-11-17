@@ -21,4 +21,3 @@ class Utils:
             print(f"Error: an error occurred while reading the file, \
 path: {path}")
         return None
-

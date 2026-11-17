@@ -17,9 +17,11 @@ class config:
     HEIGHT = 720
     BALL_SIZE = 15
 
+    PLAYER_SPEED = 4
+
     GUM_SIZE = 5
     SUPER_GUM_SIZE = 10
-    SUPER_GUM_DURATION = 15000
+    SUPER_GUM_DURATION = 5000
     LEVEL_SETTINGS = [
         {"size": (15, 15), "seed": 42},
         {"size": (14, 17), "seed": 202},
