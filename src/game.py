@@ -234,7 +234,7 @@ class GameEngine:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         self.exit()
-                    if event.key == pygame.K_p and self.state == "game":
+                    if event.key == pygame.K_ESCAPE and self.state == "game":
                         self.hundle_pause()
                         if self.pause:
                             self.stop_timer = pygame.time.get_ticks()

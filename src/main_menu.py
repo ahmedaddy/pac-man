@@ -1,6 +1,5 @@
 import pygame
 from .config import config
-# from .components import Button
 from .utils import Utils
 
 height = config.HEIGHT
@@ -19,6 +18,15 @@ class Mainmenu:
             self.background,
             self.screen.get_size()
         )
+
+        self.instruction_img = pygame.image.load(
+            "src/assets/pac_strike_instructions.png"
+        ).convert()
+        self.screen_size = self.screen.get_size()
+        self.instruction_img = pygame.transform.smoothscale(
+            self.instruction_img,
+            (self.screen_size[0] // 1.3, self.screen_size[1] // 1.3))
+
         screen_width = self.screen.get_width()
         screen_height = self.screen.get_height()
 
@@ -70,7 +78,7 @@ class Mainmenu:
             self.draw_hover(self.start_game_rect)
             self.draw_hover(self.highscores_rect)
             self.draw_hover(self.instructions_rect)
-            self.draw_hover(self.quit_game_rect)
+            self.draw_hover(self.quit_game_rect, True)
 
         elif self.page == "highscores":
             self.draw_highscores()
@@ -101,7 +109,7 @@ class Mainmenu:
                 if self.highscores_rect.collidepoint(event.pos):
                     self.scores = (
                         Utils.read_json_file("./high_scores.json")
-                        or {"score": []}
+                        or {"scores": []}
                     )
                     self.page = "highscores"
                     return None
@@ -132,7 +140,7 @@ class Mainmenu:
         )
 
         title_rect = title.get_rect(
-            center=(width // 2, 70)
+            center=(width // 2, 60)
         )
 
         self.screen.blit(title, title_rect)
@@ -164,6 +172,7 @@ class Mainmenu:
                 center=self.back_rect.center
             )
         )
+        return overlay
 
     def draw_highscores(self):
 
@@ -212,7 +221,7 @@ class Mainmenu:
 
             self.screen.blit(text_surface, text_rect)
 
-    def draw_hover(self, rect):
+    def draw_hover(self, rect, is_quit=False):
         mouse_pos = pygame.mouse.get_pos()
 
         if rect.collidepoint(mouse_pos):
@@ -221,8 +230,10 @@ class Mainmenu:
                 (rect.width, rect.height),
                 pygame.SRCALPHA
             )
-
-            hover.fill((255, 255, 255, 40))
+            if is_quit:
+                hover.fill((255, 25, 25, 40))
+            else:
+                hover.fill((255, 255, 255, 40))
 
             self.screen.blit(
                 hover,
@@ -230,4 +241,8 @@ class Mainmenu:
             )
 
     def draw_instruction(self):
-        self.init_inst_scr_page("Game Instruction ")
+        self.init_inst_scr_page("Game Instruction")
+        self.screen.blit(self.instruction_img, self.instruction_img.get_rect(
+            center=(
+                self.screen.get_width() // 2, self.screen.get_height() // 2
+                )))

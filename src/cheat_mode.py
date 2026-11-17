@@ -15,17 +15,14 @@ class CheatMode():
 
         self.font = pygame.font.Font(None, 26)
 
-        # Button that opens the panel
         self.button_rect = pygame.Rect(
             screen.get_width() - 140, 10, 125, 38
         )
 
-        # Main panel
         self.panel_rect = pygame.Rect(
             screen.get_width() - 240, 55, 240, 220
         )
 
-        # Clickable rows
         self.rows = {}
 
         for i, key in enumerate(self.flags):
@@ -56,7 +53,6 @@ class CheatMode():
         if event.button != 1:
             return False
 
-        # Open / close panel
         if self.button_rect.collidepoint(event.pos):
             self.open = not self.open
             return True
@@ -64,13 +60,11 @@ class CheatMode():
         if not self.open:
             return False
 
-        # Toggle the clicked checkbox
         for key, rect in self.rows.items():
             if rect.collidepoint(event.pos):
                 self.flags[key] = not self.flags[key]
                 return True
 
-        # Consume clicks inside the panel
         if self.panel_rect.collidepoint(event.pos):
             return True
 
@@ -116,7 +110,6 @@ class CheatMode():
 
         for key, rect in self.rows.items():
 
-            # Checkbox
             checkbox = pygame.Rect(
                 rect.x + 5,
                 rect.y + 6,
@@ -124,7 +117,6 @@ class CheatMode():
             )
 
             enabled = self.flags[key]
-
             color = "#00E5FF" if enabled else "#64748B"
 
             pygame.draw.rect(
