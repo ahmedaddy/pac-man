@@ -2,7 +2,7 @@ import dataclasses
 
 
 @dataclasses.dataclass
-class Config:
+class config:
     High_SCORE_FILE: str = "high_scores.json"
     YELLOW: str = "#FFFF00"
     RED: str = "#F62217"
@@ -28,8 +28,7 @@ class Config:
     GUM_SIZE: int = 5
     SUPER_GUM_SIZE: int = 10
     SUPER_GUM_DURATION: int = 5000
-    LEVEL_SETTINGS: list = dataclasses.field(default_factory=list)
-    [
+    LEVEL_SETTINGS = [
         {"size": (15, 15), "seed": 42},
         {"size": (14, 17), "seed": 202},
         {"size": (15, 18), "seed": 303},

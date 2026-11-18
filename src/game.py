@@ -135,10 +135,10 @@ class GameEngine:
         if self.level >= len(self.levels):
             self.state = "score"
             self.level = 1
-            return
-        self.level += 1
+        else:
+            self.level += 1
+            self.load_level(self.levels[self.level - 1])
         self.cheat.flags['skip'] = False
-        self.load_level(self.levels[self.level - 1])
 
     def start_new_game(self):
         self.level = 1

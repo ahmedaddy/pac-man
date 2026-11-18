@@ -5,9 +5,8 @@
             "level_number": 1,
             "level_name": "Level 1",
             "level_description": "This is the first level of the game.",
-            "level_difficulty": "Easy",
-            "width": 800,
-            "height": 600
+            "size": [15, 15],
+            "seed": 42
         },
         {
             "level_number": 2,
@@ -21,9 +20,8 @@
             "level_number": 3,
             "level_name": "Level 3",
             "level_description": "This is the third level of the game.",
-            "level_difficulty": "Hard",
-            "width": 800,
-            "height": 600
+            "size": [15, 15],
+            "seed": 42
         }
     ],
     "player_speed": 4,

@@ -1,6 +1,6 @@
 from mazegenerator import MazeGenerator
 from .game import GameEngine
-from .config import Config
+from .config import config
 from .cli import CLI
 
 
@@ -27,7 +27,7 @@ class Main:
         config_dict = cli_command.config_dict
         for key in config_dict:
             key = key.upper()
-        config = Config(**config_dict)
+        # config = config(**config_dict)
         levels = create_levels()
         # print(levels[0])
         game = GameEngine(levels)
