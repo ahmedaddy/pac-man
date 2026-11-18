@@ -17,6 +17,8 @@ class Utils:
                 return json.load(handle)
         except FileNotFoundError:
             print(f"Error: file not found, path: {path}")
+        except json.JSONDecodeError:
+            print(f"Error: invalid JSON in file, path: {path}")
         except Exception:
             print(f"Error: an error occurred while reading the file, \
 path: {path}")

@@ -1,8 +1,7 @@
-import sys
-from .utils import Utils
 from mazegenerator import MazeGenerator
 from .game import GameEngine
-from .config import config
+from .config import Config
+from .cli import CLI
 
 
 def create_levels():
@@ -23,8 +22,12 @@ def create_levels():
 class Main:
     def run(self):
         # try:
-        file_name = sys.argv[1]
-        file = Utils.read_json_file(file_name)
+        cli_command = CLI()
+        cli_command.load_json_file()
+        config_dict = cli_command.config_dict
+        for key in config_dict:
+            key = key.upper()
+        config = Config(**config_dict)
         levels = create_levels()
         # print(levels[0])
         game = GameEngine(levels)

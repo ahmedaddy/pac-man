@@ -6,7 +6,7 @@ class Pacman(Player):
     def __init__(self, row, col, map_data, color):
         super().__init__(row, col, map_data, color)
         self.pacman_starts_positions = (0, 0)
-        self.lives = 3
+        self.lives = config.PLAYER_LIVES
         self.score = 0
 
     def lose_life(self):

@@ -1,30 +1,37 @@
-class config:
-    YELLOW = "#FFFF00"
-    RED = "#F62217"
-    BLINKY = "#FF0000"
-    PINK = "#EA82E5"
-    CYAN = "#46BFEE"
-    ORANGE = "#DB851C"
-    DARK_BLUE = "#0a9396"
+import dataclasses
 
-    CELL_SIZE = 32
 
-    LEFT = "LEFT"
-    RIGHT = "RIGHT"
-    UP = "UP"
-    DOWN = "DOWN"
-    WIDTH = 1080
-    HEIGHT = 720
-    BALL_SIZE = 15
+@dataclasses.dataclass
+class Config:
+    High_SCORE_FILE: str = "high_scores.json"
+    YELLOW: str = "#FFFF00"
+    RED: str = "#F62217"
+    BLINKY: str = "#FF0000"
+    PINK: str = "#EA82E5"
+    CYAN: str = "#46BFEE"
+    ORANGE: str = "#DB851C"
+    DARK_BLUE: str = "#0a9396"
 
-    PLAYER_SPEED = 4
+    CELL_SIZE: int = 32
 
-    GUM_SIZE = 5
-    SUPER_GUM_SIZE = 10
-    SUPER_GUM_DURATION = 5000
-    LEVEL_SETTINGS = [
+    LEFT: str = "LEFT"
+    RIGHT: str = "RIGHT"
+    UP: str = "UP"
+    DOWN: str = "DOWN"
+    WIDTH: int = 1080
+    HEIGHT: int = 720
+    BALL_SIZE: int = 15
+
+    PLAYER_SPEED: int = 4
+    PLAYER_LIVES: int = 3
+
+    GUM_SIZE: int = 5
+    SUPER_GUM_SIZE: int = 10
+    SUPER_GUM_DURATION: int = 5000
+    LEVEL_SETTINGS: list = dataclasses.field(default_factory=list)
+    [
         {"size": (15, 15), "seed": 42},
         {"size": (14, 17), "seed": 202},
         {"size": (15, 18), "seed": 303},
     ]
-    LEVEL_TIMER = 90
+    LEVEL_TIMER: int = 90

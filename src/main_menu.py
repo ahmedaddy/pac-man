@@ -8,7 +8,7 @@ width = config.WIDTH
 
 class Mainmenu:
     def __init__(self, screen):
-        pygame.init()
+        # pygame.init()
         pygame.display.set_caption("Pac-man menu")
         self.screen = screen
         self.background = pygame.image.load(
