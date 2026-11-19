@@ -3,7 +3,7 @@ import pygame
 from .config import config
 from .pacman import Pacman
 from .ghost import Ghosts
-from .components import Button, Notification
+from .components import Button
 from .main_menu import Mainmenu
 from .score_recorder import ScoreRecorder
 import random
@@ -29,7 +29,11 @@ class Pacgum:
 
     def draw(self, screen, offset_x, offset_y):
         if not self.is_eaten:
-            pygame.draw.circle(screen, config.ORANGE, (self.x + offset_x, self.y + offset_y), self.size)
+            pygame.draw.circle(
+                screen, config.ORANGE,
+                (self.x + offset_x, self.y + offset_y),
+                self.size
+                )
 
 
 class GameEngine:
@@ -54,6 +58,8 @@ class GameEngine:
         self.cheat = CheatMode(self.screen)
         self.stop_timer = None
         self.remaining_supergum_effect = None
+        # 1 = Win, 2 = lose
+        self.game_state = 1
 
     def load_level(self, map_data):
         old_pacman = getattr(self, "pacman", None)
@@ -92,9 +98,15 @@ class GameEngine:
         self.pacman.lives = saved_lives
         self.ghosts = [
             Ghosts(1, 0, self.map, self.pacman, 2, config.RED, self),
-            Ghosts(len(self.map) - 1, 1, self.map, self.pacman, 2, config.PINK, self),
-            Ghosts(1, len(self.map[0]) - 1, self.map, self.pacman, 2, config.ORANGE, self),
-            Ghosts(len(self.map) - 2, len(self.map[0]) - 1, self.map, self.pacman, 1, config.CYAN, self)
+            Ghosts(
+                len(self.map) - 1, 1, self.map,
+                self.pacman, 2, config.PINK, self),
+            Ghosts(
+                1, len(self.map[0]) - 1, self.map,
+                self.pacman, 2, config.ORANGE, self),
+            Ghosts(
+                len(self.map) - 2, len(self.map[0]) - 1,
+                self.map, self.pacman, 1, config.CYAN, self)
         ]
         assets = Path(__file__).resolve().parent / "assets"
         self.pacman.set_sprite(assets / "pac_man.png")
@@ -209,7 +221,8 @@ class GameEngine:
                     self.cheat.draw()
                     self.handle_death()
                 if self.state == "score":
-                    self.score_recorder.draw(self.pacman.score)
+                    self.score_recorder.draw(
+                        self.pacman.score, self.game_state)
             else:
                 self.screen.fill("#001219")
                 pause_text = Button(
@@ -241,7 +254,8 @@ class GameEngine:
                             self.stop_timer = pygame.time.get_ticks()
                         else:
                             if self.stop_timer is not None:
-                                self.start_time += (pygame.time.get_ticks() - self.stop_timer)
+                                self.start_time += (
+                                    pygame.time.get_ticks() - self.stop_timer)
                             self.stop_timer = None
             if self.pause:
                 if self.resume_button.handle_button_events(event):
@@ -326,13 +340,22 @@ class GameEngine:
 
     def infos(self):
         infos = []
-        score = Button(config.WIDTH // 2, 0, 40, 20, f"Score: {self.pacman.score}", "black", "black", "white")
+        score = Button(
+            config.WIDTH // 2, 0, 40, 20,
+            f"Score: {self.pacman.score}", "black", "black", "white")
         infos.append(score)
-        lives = Button(config.WIDTH // 2 + 120, 0, 40, 20, f"lives: {self.pacman.lives}", "black", "black", "white")
+        lives = Button(
+            config.WIDTH // 2 + 120, 0, 40, 20,
+            f"lives: {self.pacman.lives}",
+            "black", "black", "white")
         infos.append(lives)
-        levels = Button(config.WIDTH // 2 - 120, 0, 40, 20, f"Level: {self.level}", "black", "black", "white")
+        levels = Button(
+            config.WIDTH // 2 - 120, 0, 40, 20,
+            f"Level: {self.level}", "black", "black", "white")
         infos.append(levels)
-        timer = Button(config.WIDTH // 2 - 240, 0, 40, 20, f"Time: {self.time_remaining()}", "black", "black", "white")
+        timer = Button(
+            config.WIDTH // 2 - 240, 0, 40, 20,
+            f"Time: {self.time_remaining()}", "black", "black", "white")
         infos.append(timer)
         return infos
 
@@ -406,7 +429,8 @@ in all valid positions.")
                     self.pacman.score += 10
                     for ghost in self.ghosts:
                         ghost.edible = True
-                        self.remaining_supergum_effect = config.SUPER_GUM_DURATION
+                        self.remaining_supergum_effect = (
+                            config.SUPER_GUM_DURATION)
                     self.super_gum_timer = pygame.time.get_ticks()
 
     def update_super_gum_timer(self):
@@ -422,9 +446,11 @@ in all valid positions.")
             self.super_gum_timer = None
 
     def handle_death(self):
-        if self.pacman.lives == 0 or self.time_remaining() == 0 and not self.pause:
+        if (self.pacman.lives == 0
+                or self.time_remaining() == 0 and not self.pause):
+            self.game_state = 2
             self.state = "score"
-        elif self.gums_state and all(gum.is_eaten for gum in self.super_gums) and not self.pause:
+        elif (self.gums_state):
             self.next_level()
 
     def find_pacman_start_position(self):
