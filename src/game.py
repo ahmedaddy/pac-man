@@ -12,7 +12,19 @@ from .cheat_mode import CheatMode
 
 
 class Cell:
+    """
+    Represents a cell in the maze, with walls in four directions.
+    """
     def __init__(self, value):
+        """
+        Initialize the cell with walls based on the given value.
+        The value is expected to be an integer
+        where each bit represents a wall:
+        - Bit 0 (1): Up wall
+        - Bit 1 (2): Right wall
+        - Bit 2 (4): Down wall
+        - Bit 3 (8): Left wall
+        """
         self.up = bool(value & 1)
         self.right = bool(value & 2)
         self.down = bool(value & 4)
@@ -20,14 +32,30 @@ class Cell:
 
 
 class Pacgum:
+    """
+    Represents a pacgum in the game, which can be eaten by Pacman.
+    """
     def __init__(self, x, y, size, score=10):
+        """
+        Initialize the pacgum with its position, size, and score value.
+        """
         self.x = x
         self.y = y
         self.score = score
         self.is_eaten = False
         self.size = size
 
-    def draw(self, screen, offset_x, offset_y):
+    def draw(self, screen: pygame.Surface, offset_x: int, offset_y: int):
+        """
+        Draw the pacgum on the screen if it has not been eaten.
+        params:
+        - screen: The Pygame surface to draw on.
+        - offset_x: The x-offset to apply when
+            drawing (for centering the maze).
+        - offset_y: The y-offset to apply when
+            drawing (for centering the maze).
+        returns: None
+        """
         if not self.is_eaten:
             pygame.draw.circle(
                 screen, config.ORANGE,
@@ -37,8 +65,16 @@ class Pacgum:
 
 
 class GameEngine:
-    def __init__(self, levels):
-        """Initialize the game."""
+    """
+    The main game engine that handles the game loop, events, and rendering.
+    """
+    def __init__(self, levels: list) -> None:
+        """
+        Initialize the game engine with the given levels.
+        params:
+        - levels: A list of level data to load and play.
+        returns: None
+        """
         pygame.init()
         pygame.display.set_caption("PAC MAN")
         self.screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
@@ -61,7 +97,13 @@ class GameEngine:
         # 1 = Win, 2 = lose
         self.game_state = 1
 
-    def load_level(self, map_data):
+    def load_level(self, map_data: list) -> None:
+        """
+        Load the level from the given map data.
+        params:
+        - map_data: A 2D list representing the maze layout.
+        returns: None
+        """
         old_pacman = getattr(self, "pacman", None)
         saved_score = old_pacman.score if old_pacman else 0
         saved_lives = old_pacman.lives if old_pacman else 3
@@ -143,7 +185,10 @@ class GameEngine:
             "Quit", "black", "red", "white"
         )
 
-    def next_level(self):
+    def next_level(self) -> None:
+        """
+        Move to the next level or end the game if all levels are completed.
+        """
         if self.level >= len(self.levels):
             self.state = "score"
             self.level = 1
@@ -152,14 +197,18 @@ class GameEngine:
             self.load_level(self.levels[self.level - 1])
         self.cheat.flags['skip'] = False
 
-    def start_new_game(self):
+    def start_new_game(self) -> None:
+        """
+        Start a new game by resetting the level, score, and lives.
+        """
         self.level = 1
         self.pacman.score = 0
         self.pacman.lives = 3
         self.load_level(self.levels[0])
         self.state = "game"
 
-    def time_remaining(self):
+    def time_remaining(self) -> int:
+        """Calculate the remaining time for the current level."""
         limit = config.LEVEL_TIMER
         elapsed = pygame.time.get_ticks() - self.start_time
         return max(0, limit - elapsed // 1000)
@@ -168,7 +217,7 @@ class GameEngine:
         """Stop the game."""
         self.running = False
 
-    def gameLoop(self):
+    def gameLoop(self) -> None:
         """Run the main game loop."""
 
         while self.running:
@@ -241,7 +290,7 @@ class GameEngine:
 
         pygame.quit()
 
-    def handleEvents(self):
+    def handleEvents(self) -> None:
         """Handle keyboard and window events."""
         for event in pygame.event.get():
             if self.state != "score":
@@ -282,7 +331,13 @@ class GameEngine:
             if self.state == "score":
                 self.state = "score"
 
-    def handle_game_event(self, event):
+    def handle_game_event(self, event: pygame.event.Event) -> None:
+        """
+        Handle game-specific events, such as key presses for Pacman's movement.
+        params:
+        - event: The Pygame event to handle.
+        returns: None
+        """
         if event.type == pygame.KEYDOWN:
             directions = {
                 pygame.K_UP: config.UP,
@@ -293,13 +348,24 @@ class GameEngine:
             if event.key in directions:
                 self.pacman.set_direction(directions[event.key])
 
-    def corrdinates_to_pixels(self, x, y):
+    def corrdinates_to_pixels(self, x: int, y: int) -> tuple[int, int]:
+        """
+        Convert grid coordinates to pixel coordinates for rendering.
+        params:
+        - x: The x-coordinate in the grid.
+        - y: The y-coordinate in the grid.
+        returns: A tuple of (pixel_x, pixel_y) coordinates.
+        """
         ret_x = (x * config.CELL_SIZE) + config.CELL_SIZE // 2
         ret_y = (y * config.CELL_SIZE) + config.CELL_SIZE // 2
         return ret_x, ret_y
 
-    def draw_walls(self):
-        """Draw the maze walls."""
+    def draw_walls(self) -> None:
+        """
+        Draw the walls of the maze based on the cell data.
+        Each cell has boolean attributes indicating the presence of walls
+        in the up, right, down, and left directions.
+        """
         for row, cells in enumerate(self.map):
             for col, cell in enumerate(cells):
                 x = self.offset_x + col * config.CELL_SIZE
@@ -338,7 +404,14 @@ class GameEngine:
                         5
                     )
 
-    def infos(self):
+    def infos(self) -> list[Button]:
+        """
+        Create and return a list of Button objects displaying game information:
+        - Score
+        - Lives
+        - Level
+        - Time remaining
+        """
         infos = []
         score = Button(
             config.WIDTH // 2, 0, 40, 20,
@@ -359,7 +432,14 @@ class GameEngine:
         infos.append(timer)
         return infos
 
-    def generate_pacgums(self, number_of_gums):
+    def generate_pacgums(self, number_of_gums: int) -> list[Pacgum]:
+        """
+        Generate a list of Pacgum objects
+        placed at valid positions in the maze.
+        params:
+        - number_of_gums: The number of pacgums to generate.
+        returns: A list of Pacgum objects.
+        """
         pac_gums = []
         valid_positions = []
         for row, c in enumerate(self.map):
@@ -379,14 +459,24 @@ in all valid positions.")
             pac_gums.append(Pacgum(gum_x, gum_y, config.GUM_SIZE, 10))
         return pac_gums
 
-    def generate_supergums(self):
+    def generate_supergums(self) -> list[Pacgum]:
+        """
+        Generate a list of super pacgums placed at the corners of the maze.
+        returns: A list of Pacgum objects representing super pacgums.
+        """
         super_pacgums = []
         for corner in self.corners:
             super_pacgums.append(
                 Pacgum(corner[0], corner[1], config.SUPER_GUM_SIZE, 50))
         return super_pacgums
 
-    def handle_gums(self):
+    def handle_gums(self) -> None:
+        """
+        Check for collisions between Pacman and pacgums.
+        If Pacman collides with a pacgum, mark it
+        as eaten and increase the score.
+        If all pacgums are eaten, set the gums_state to True.
+        """
         all_done = 0
         for gum in self.gums:
             if not gum.is_eaten:
@@ -409,7 +499,12 @@ in all valid positions.")
         if all_done == 0:
             self.gums_state = True
 
-    def handle_super_pacgums(self):
+    def handle_super_pacgums(self) -> None:
+        """
+        Check for collisions between Pacman and super pacgums.
+        If Pacman collides with a super pacgum, mark it as eaten,
+        increase the score, and set all ghosts to edible state.
+        """
         for gum in self.super_gums:
             if not gum.is_eaten:
                 pac_man_rect = pygame.Rect(
@@ -433,7 +528,12 @@ in all valid positions.")
                             config.SUPER_GUM_DURATION)
                     self.super_gum_timer = pygame.time.get_ticks()
 
-    def update_super_gum_timer(self):
+    def update_super_gum_timer(self) -> None:
+        """
+        Update the timer for the super pacgum effect.
+        If the effect duration has passed,
+        reset the ghosts to non-edible state.
+        """
         if self.super_gum_timer is None or self.pause:
             return
         current_time = pygame.time.get_ticks()
@@ -445,7 +545,13 @@ in all valid positions.")
                 ghost.is_eaten = False
             self.super_gum_timer = None
 
-    def handle_death(self):
+    def handle_death(self) -> None:
+        """
+        Handle the death of Pacman.
+        If Pacman has no lives left or time has run out,
+        set the game state to game over.
+        If all pacgums are eaten, proceed to the next level.
+        """
         if (self.pacman.lives == 0
                 or self.time_remaining() == 0 and not self.pause):
             self.game_state = 2
@@ -453,7 +559,11 @@ in all valid positions.")
         elif (self.gums_state):
             self.next_level()
 
-    def find_pacman_start_position(self):
+    def find_pacman_start_position(self) -> tuple[int, int]:
+        """
+        Find the starting position for Pacman in the maze.
+        Returns the position as a tuple of (row, col).
+        """
         center_row = len(self.map) // 2
         center_col = len(self.map[0]) // 2
         valid_cells = [
@@ -467,7 +577,10 @@ in all valid positions.")
             key=lambda pos: abs(pos[0] - center_row) + abs(pos[1] - center_col)
         )
 
-    def hundle_pause(self):
+    def handle_pause(self) -> None:
+        """
+        Handle the pause functionality.
+        """
         current_time = pygame.time.get_ticks()
 
         if not self.pause:
