@@ -15,7 +15,7 @@ class Cell:
     """
     Represents a cell in the maze, with walls in four directions.
     """
-    def __init__(self, value):
+    def __init__(self, value: int) -> None:
         """
         Initialize the cell with walls based on the given value.
         The value is expected to be an integer
@@ -35,7 +35,7 @@ class Pacgum:
     """
     Represents a pacgum in the game, which can be eaten by Pacman.
     """
-    def __init__(self, x, y, size, score=10):
+    def __init__(self, x: int, y: int, size: int, score: int = 10) -> None:
         """
         Initialize the pacgum with its position, size, and score value.
         """
@@ -45,7 +45,9 @@ class Pacgum:
         self.is_eaten = False
         self.size = size
 
-    def draw(self, screen: pygame.Surface, offset_x: int, offset_y: int):
+    def draw(
+            self,
+            screen: pygame.Surface, offset_x: int, offset_y: int) -> None:
         """
         Draw the pacgum on the screen if it has not been eaten.
         params:
@@ -87,12 +89,12 @@ class GameEngine:
         self.state = "menu"
         self.levels = levels
         self.pause = False
-        self.pause_started_at = None
+        self.pause_started_at: int | None = None
 
         self.load_level(self.levels[0])
 
         self.cheat = CheatMode(self.screen)
-        self.stop_timer = None
+        self.stop_timer: int | None = None
         self.remaining_supergum_effect = None
         # 1 = Win, 2 = lose
         self.game_state = 1
@@ -169,7 +171,7 @@ class GameEngine:
         self.gums = self.generate_pacgums(1)
         self.super_gums = self.generate_supergums()
         self.gums_state = False
-        self.super_gum_timer = None
+        self.super_gum_timer: int | None = None
         self.start_time = pygame.time.get_ticks()
         self.resume_button = Button(
             config.WIDTH // 2 - 140 // 2,
@@ -209,11 +211,12 @@ class GameEngine:
 
     def time_remaining(self) -> int:
         """Calculate the remaining time for the current level."""
-        limit = config.LEVEL_TIMER
-        elapsed = pygame.time.get_ticks() - self.start_time
+        limit: int = config.LEVEL_TIMER
+        ticks: int = pygame.time.get_ticks()
+        elapsed: int = ticks - self.start_time
         return max(0, limit - elapsed // 1000)
 
-    def exit(self):
+    def exit(self) -> None:
         """Stop the game."""
         self.running = False
 
@@ -298,7 +301,7 @@ class GameEngine:
                     if event.key == pygame.K_q:
                         self.exit()
                     if event.key == pygame.K_ESCAPE and self.state == "game":
-                        self.hundle_pause()
+                        self.handle_pause()
                         if self.pause:
                             self.stop_timer = pygame.time.get_ticks()
                         else:
