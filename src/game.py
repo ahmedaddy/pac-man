@@ -556,7 +556,8 @@ in all valid positions.")
                 or self.time_remaining() == 0 and not self.pause):
             self.game_state = 2
             self.state = "score"
-        elif (self.gums_state):
+        elif (self.gums_state and
+                all(gum.is_eaten for gum in self.super_gums)):
             self.next_level()
 
     def find_pacman_start_position(self) -> tuple[int, int]:

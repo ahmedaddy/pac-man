@@ -6,8 +6,13 @@ from pathlib import Path
 
 
 class ScoreRecorder:
-    def __init__(self, screen):
-        # pygame.init()
+    """
+    A class to handle the score recording functionality in the game.
+    """
+    def __init__(self, screen: pygame.Surface) -> None:
+        """
+        Initialize the score recorder.
+        """
         pygame.display.set_caption("Record Score --- Pac-Man")
         self.screen = screen
         self.input = Input(
@@ -19,7 +24,13 @@ class ScoreRecorder:
             (config.HEIGHT // 2) - 50 / 2 + 100, 100, 50,
             "Submit", "blue", "lightblue", "white")
 
-    def draw(self, score, state):
+    def draw(self, score: int, state: int) -> None:
+        """
+        Draw the score recording interface on the screen.
+        params:
+            score: The score to display.
+            state: The game state (1 for win, 2 for game over).
+        """
         self.screen.fill("#001219")
         text_backgound_rect = pygame.draw.rect(
             self.screen,
@@ -54,7 +65,20 @@ class ScoreRecorder:
                     (config.HEIGHT // 2) - 50 / 2 - 150))
             self.screen.blit(win_surface, win_rect)
 
-    def handle_event(self, event, score):
+    def handle_event(
+            self,
+            event: pygame.event.Event,
+            score: int
+            ) -> str | None:
+        """
+        Handle events for the score recorder.
+        params:
+            event: The pygame event to handle.
+            score: The score to record.
+        returns:
+            str | None: "menu" if the score was successfully recorded,
+            or None if no action was taken.
+        """
         if self.submit_button.handle_button_events(event):
             player_name = self.input.text
             if player_name:
