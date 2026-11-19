@@ -542,7 +542,8 @@ in all valid positions.")
         current_time = pygame.time.get_ticks()
         spent_time = current_time - self.super_gum_timer
 
-        if spent_time >= self.remaining_supergum_effect:
+        if (self.remaining_supergum_effect is not None
+                and spent_time >= self.remaining_supergum_effect):
             for ghost in self.ghosts:
                 ghost.edible = False
                 ghost.is_eaten = False

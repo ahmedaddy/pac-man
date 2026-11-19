@@ -27,22 +27,23 @@ class Player:
         self.GameEngine = None
 
         self.speed = config.PLAYER_SPEED
-        self.direction = None
-        self.desired_direction = None
+        self.direction: str | None = None
+        self.desired_direction: str | None = None
         self.color = color
+        self.sprite: pygame.Surface | None = None
 
-    def is_aligned(self):
+    def is_aligned(self) -> bool:
         """
         Check if the player is aligned with the grid.
         returns:
             bool: True if the player is aligned with the grid, otherwise False.
         """
-        return (
+        return bool(
             self.x % config.CELL_SIZE == 0
             and self.y % config.CELL_SIZE == 0
         )
 
-    def get_current_cell(self):
+    def get_current_cell(self) -> tuple:
         """
         Get the current cell of the player based on its position.
         returns:
@@ -74,7 +75,7 @@ class Player:
             return col < len(self.map[0]) - 1 and not cell.right
         return False
 
-    def set_direction(self, direction: str) -> None:
+    def set_direction(self, direction: str | None) -> None:
         """
         Set the desired direction for the player to move.
         params:
@@ -138,6 +139,8 @@ class Player:
         center_y = offset_y + self.y + config.CELL_SIZE // 2
 
         sprite = self.sprite
+        if sprite is None:
+            return
 
         sprite_rect = sprite.get_rect(
             center=(center_x, center_y)
