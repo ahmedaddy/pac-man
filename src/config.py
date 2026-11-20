@@ -31,9 +31,9 @@ class Config:
     LEVEL_SETTINGS = [
         {"size": (15, 15), "seed": 42},
         {"size": (14, 17), "seed": 1},
-        {"size": (11, 32), "seed": 1},
+        {"size": (11, 17), "seed": 1},
         {"size": (15, 18), "seed": 1},
-        {"size": (12, 24), "seed": 1},
+        {"size": (12, 20), "seed": 1},
         {"size": (10, 18), "seed": 1},
         {"size": (18, 14), "seed": 1},
         {"size": (11, 20), "seed": 1},
