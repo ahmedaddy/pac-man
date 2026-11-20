@@ -54,16 +54,16 @@ class ScoreRecorder:
                 "Game Over", True, "red")
             game_over_rect = game_over_surface.get_rect(
                 center=(
-                    config.WIDTH // 2,
-                    (config.HEIGHT // 2) - 50 / 2 - 150))
+                    self.config.WIDTH // 2,
+                    (self.config.HEIGHT // 2) - 50 / 2 - 150))
             self.screen.blit(game_over_surface, game_over_rect)
         elif state == 1:
             win_surface = self.font.render(
                 "You Win!", True, "green")
             win_rect = win_surface.get_rect(
                 center=(
-                    config.WIDTH // 2,
-                    (config.HEIGHT // 2) - 50 / 2 - 150))
+                    self.config.WIDTH // 2,
+                    (self.config.HEIGHT // 2) - 50 / 2 - 150))
             self.screen.blit(win_surface, win_rect)
 
     def handle_event(
@@ -110,8 +110,8 @@ class ScoreRecorder:
                     "Please enter a name before submitting.", True, "red")
                 dialog_rect = dialog_surface.get_rect(
                     center=(
-                        config.WIDTH // 2,
-                        (config.HEIGHT // 2) - 50 / 2 + 200))
+                        self.config.WIDTH // 2,
+                        (self.config.HEIGHT // 2) - 50 / 2 + 200))
                 self.screen.blit(dialog_surface, dialog_rect)
                 print("Please enter a name before submitting.")
         self.input.handle_event(event)

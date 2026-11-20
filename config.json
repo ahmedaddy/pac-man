@@ -1,5 +1,5 @@
 {
-    "high_score_filename": "highscores.json",
+    "high_score_filename": "high_scores.json",
     "player_speed": 4,
     "player_lives": 3,
     "pacgum": 42,

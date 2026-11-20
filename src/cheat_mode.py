@@ -1,29 +1,41 @@
+from __future__ import annotations
+
+
+from typing import Optional
+
 import pygame
 
 
 class CheatMode():
-    def __init__(self, screen):
-        self.screen = screen
-        self.open = None
+    """Manage cheat flags and their interactive overlay."""
 
-        self.flags = {
+    def __init__(self, screen: pygame.Surface) -> None:
+        """Initialize cheat flags, panel geometry, and labels.
+
+        Args:
+            screen: Pygame surface receiving the rendered content.
+        """
+        self.screen: pygame.Surface = screen
+        self.open: Optional[bool] = None
+
+        self.flags: dict[str, bool] = {
             "invincibility": False,
             "freeze": False,
             "skip": False,
             "increase_speed": False
         }
 
-        self.font = pygame.font.Font(None, 26)
+        self.font: pygame.font.Font = pygame.font.Font(None, 26)
 
-        self.button_rect = pygame.Rect(
+        self.button_rect: pygame.Rect = pygame.Rect(
             screen.get_width() - 140, 10, 125, 38
         )
 
-        self.panel_rect = pygame.Rect(
+        self.panel_rect: pygame.Rect = pygame.Rect(
             screen.get_width() - 240, 55, 240, 220
         )
 
-        self.rows = {}
+        self.rows: dict[str, pygame.Rect] = {}
 
         for i, key in enumerate(self.flags):
             self.rows[key] = pygame.Rect(
@@ -33,15 +45,23 @@ class CheatMode():
                 34
             )
 
-        self.labels = {
+        self.labels: dict[str, str] = {
             "invincibility": "Invincibility",
             "freeze": "Freeze Ghosts",
             "skip": "Skip This Level",
             "increase_speed": "High Speed 300km/h"
         }
 
-    def hundle_event(self, event):
+    def hundle_event(self, event: pygame.event.Event) -> bool:
 
+        """Handle cheat-panel input and report whether it consumed the event.
+
+        Args:
+            event: Pygame input event to process.
+
+        Returns:
+            True if the cheat panel consumed the event; otherwise False.
+        """
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_c:
                 self.open = not self.open
@@ -70,7 +90,8 @@ class CheatMode():
 
         return False
 
-    def draw(self):
+    def draw(self) -> None:
+        """Render the current state on the game surface."""
         screen = self.screen
 
         pygame.draw.rect(
@@ -149,7 +170,17 @@ class CheatMode():
                 (rect.x + 38, rect.y + 7)
             )
 
-    def draw_text(self, text, center, color):
+    def draw_text(
+        self, text: str, center: tuple[int, int],
+        color: str
+            ) -> None:
+        """Render centered text on the cheat-panel surface.
+
+        Args:
+            text: Text to render.
+            center: Text center in pixel coordinates.
+            color: Rendering color.
+        """
         surface = self.font.render(text, True, color)
         rect = surface.get_rect(center=center)
         self.screen.blit(surface, rect)

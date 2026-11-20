@@ -1,7 +1,6 @@
 import pygame
 
 from .pacman import Pacman
-from .ghost import Ghosts
 from .components import Button
 from .main_menu import Mainmenu
 from .score_recorder import ScoreRecorder
@@ -112,6 +111,7 @@ class GameEngine:
         - map_data: A 2D list representing the maze layout.
         returns: None
         """
+        from .ghost import Ghosts
         old_pacman = getattr(self, "pacman", None)
         saved_score = old_pacman.score if old_pacman else 0
         saved_lives = old_pacman.lives if old_pacman else 3
@@ -149,7 +149,9 @@ class GameEngine:
         self.pacman.lives = saved_lives
         self.ghosts = [
 
-            Ghosts(1, 0, self.map, self.pacman, 2, self.config.RED, self, config=self.config),
+            Ghosts(
+                1, 0, self.map, self.pacman, 2,
+                self.config.RED, self, self.config),
             Ghosts(
                 len(self.map) - 1, 1, self.map,
                 self.pacman, 2, self.config.PINK, self, config=self.config),
@@ -158,18 +160,22 @@ class GameEngine:
                 self.pacman, 2, self.config.ORANGE, self, config=self.config),
             Ghosts(
                 len(self.map) - 2, len(self.map[0]) - 1,
-                self.map, self.pacman, 1, self.config.CYAN, self, config=self.config)
+                self.map, self.pacman, 1, self.config.CYAN, self, self.config)
         ]
+
         assets = Path(__file__).resolve().parent / "assets"
         self.pacman.set_sprite(assets / "pac_man.png")
+
         ghost_images = [
             "red.png",
             "pink.png",
             "orange.png",
             "cyan.png"
         ]
+
         edible_name = "edible_ghost.png"
         waiting_name = "waiting_ghost.png"
+
         for ghost, image_name in zip(self.ghosts, ghost_images):
             ghost.load_ghosts_image(
                 assets / image_name, assets / edible_name,
@@ -468,12 +474,25 @@ class GameEngine:
         if len(valid_positions) < number_of_gums:
             print("Not enough valid positions to place all gums. Placing gums \
 in all valid positions.")
+
         chose_positions = random.sample(valid_positions, min(
             number_of_gums, len(valid_positions)))
+
         for pos in chose_positions:
-            gum_x = (pos[0] * self.config.CELL_SIZE) + self.config.CELL_SIZE // 2
-            gum_y = (pos[1] * self.config.CELL_SIZE) + self.config.CELL_SIZE // 2
-            pac_gums.append(Pacgum(gum_x, gum_y, self.config.GUM_SIZE, self.config.POINTS_PER_GUM, self.config))
+            gum_x = (
+                pos[0] * self.config.CELL_SIZE
+                ) + self.config.CELL_SIZE // 2
+
+            gum_y = (
+                pos[1] * self.config.CELL_SIZE
+                ) + self.config.CELL_SIZE // 2
+
+            pac_gums.append(Pacgum(
+                gum_x, gum_y, self.config.GUM_SIZE,
+                self.config.POINTS_PER_GUM, self.config
+                )
+            )
+
         return pac_gums
 
     def generate_supergums(self) -> list[Pacgum]:
@@ -484,7 +503,12 @@ in all valid positions.")
         super_pacgums = []
         for corner in self.corners:
             super_pacgums.append(
-                Pacgum(corner[0], corner[1], self.config.SUPER_GUM_SIZE, self.config.POINTS_PER_SUPER_GUM, config=self.config))
+                Pacgum(
+                    corner[0], corner[1], self.config.SUPER_GUM_SIZE,
+                    self.config.POINTS_PER_SUPER_GUM, config=self.config
+                )
+            )
+
         return super_pacgums
 
     def handle_gums(self) -> None:

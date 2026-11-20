@@ -107,7 +107,8 @@ class Player:
             self.y -= min(self.speed, dist_to_center)
 
         elif self.direction == self.config.DOWN:
-            dist_to_center = self.config.CELL_SIZE - (self.y % self.config.CELL_SIZE)
+            dist_to_center = self.config.CELL_SIZE - (
+                self.y % self.config.CELL_SIZE)
             if self.y % self.config.CELL_SIZE == 0:
                 dist_to_center = self.config.CELL_SIZE
             self.y += min(self.speed, dist_to_center)
@@ -119,7 +120,8 @@ class Player:
             self.x -= min(self.speed, dist_to_center)
 
         elif self.direction == self.config.RIGHT:
-            dist_to_center = self.config.CELL_SIZE - (self.x % self.config.CELL_SIZE)
+            dist_to_center = self.config.CELL_SIZE - (
+                self.x % self.config.CELL_SIZE)
             if self.x % self.config.CELL_SIZE == 0:
                 dist_to_center = self.config.CELL_SIZE
             self.x += min(self.speed, dist_to_center)
