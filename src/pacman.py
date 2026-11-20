@@ -11,12 +11,13 @@ class Pacman(Player):
             row: int,
             col: int,
             map_data: list,
-            color: tuple
+            color: tuple,
+            config
             ) -> None:
         """
         Initialize the Pacman player.
         """
-        super().__init__(row, col, map_data, color)
+        super().__init__(row, col, map_data, color, config)
         self.pacman_starts_positions = (0, 0)
         self.lives = self.config.PLAYER_LIVES
         self.score = 0

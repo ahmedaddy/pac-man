@@ -74,7 +74,7 @@ class GameEngine:
     """
     The main game engine that handles the game loop, events, and rendering.
     """
-    def __init__(self, levels: list, config) -> None:
+    def __init__(self, config, levels: list) -> None:
         """
         Initialize the game engine with the given levels.
         params:
@@ -149,16 +149,16 @@ class GameEngine:
         self.pacman.lives = saved_lives
         self.ghosts = [
 
-            Ghosts(1, 0, self.map, self.pacman, 2, self.config.RED, self),
+            Ghosts(1, 0, self.map, self.pacman, 2, self.config.RED, self, config=self.config),
             Ghosts(
                 len(self.map) - 1, 1, self.map,
-                self.pacman, 2, self.config.PINK, self),
+                self.pacman, 2, self.config.PINK, self, config=self.config),
             Ghosts(
                 1, len(self.map[0]) - 1, self.map,
-                self.pacman, 2, self.config.ORANGE, self),
+                self.pacman, 2, self.config.ORANGE, self, config=self.config),
             Ghosts(
                 len(self.map) - 2, len(self.map[0]) - 1,
-                self.map, self.pacman, 1, self.config.CYAN, self)
+                self.map, self.pacman, 1, self.config.CYAN, self, config=self.config)
         ]
         assets = Path(__file__).resolve().parent / "assets"
         self.pacman.set_sprite(assets / "pac_man.png")

@@ -10,7 +10,8 @@ class Player:
             row: int,
             col: int,
             map_data: list,
-            color: tuple
+            color: tuple,
+            config
             ) -> None:
         """
         Initialize the player with its position, map data, and color.
@@ -19,7 +20,9 @@ class Player:
             col: The column index of the player's starting position.
             map_data: The map data representing the game environment.
             color: The color of the player.
+            config: The configuration object for the game.
         """
+        self.config = config
         self.x = col * self.config.CELL_SIZE
         self.y = row * self.config.CELL_SIZE
         self.map = map_data
