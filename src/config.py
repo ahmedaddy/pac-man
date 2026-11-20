@@ -30,7 +30,14 @@ class config:
     SUPER_GUM_DURATION: int = 5000
     LEVEL_SETTINGS = [
         {"size": (15, 15), "seed": 42},
-        {"size": (14, 17), "seed": 202},
-        {"size": (15, 18), "seed": 303},
+        {"size": (14, 17), "seed": 1},
+        {"size": (11, 32), "seed": 1},
+        {"size": (15, 18), "seed": 1},
+        {"size": (12, 24), "seed": 1},
+        {"size": (10, 18), "seed": 1},
+        {"size": (18, 14), "seed": 1},
+        {"size": (11, 20), "seed": 1},
+        {"size": (13, 22), "seed": 1},
+        {"size": (16, 25), "seed": 1},
     ]
     LEVEL_TIMER: int = 90
