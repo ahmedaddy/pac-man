@@ -2,8 +2,8 @@ import dataclasses
 
 
 @dataclasses.dataclass
-class config:
-    High_SCORE_FILE: str = "high_scores.json"
+class Config:
+    HIGH_SCORE_FILENAME: str = "high_scores.json"
     YELLOW: str = "#FFFF00"
     RED: str = "#F62217"
     BLINKY: str = "#FF0000"
@@ -34,3 +34,11 @@ class config:
         {"size": (15, 18), "seed": 303},
     ]
     LEVEL_TIMER: int = 90
+    POINTS_PER_GUM: int = 10
+    POINTS_PER_SUPER_GUM: int = 50
+    POINTS_PER_GHOST: int = 200
+
+    def load_config(self, config_dict: dict):
+        for key, value in config_dict.items():
+            if hasattr(self, key):
+                setattr(self, key, value)

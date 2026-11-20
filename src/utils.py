@@ -23,3 +23,26 @@ class Utils:
             print(f"Error: an error occurred while reading the file, \
 path: {path}")
         return None
+
+    @staticmethod
+    def check_config(config: dict) -> bool:
+        required_keys = [
+            "player_speed",
+            "player_lives",
+            "level_timer",
+            "points_per_ghost",
+            "points_per_super_gum",
+            "points_per_gum"
+        ]
+        print("Checking configuration...")
+        for key in required_keys:
+            if key not in config:
+                print(f"Error: missing required key in config: {key}")
+                return False
+            if key == "level":
+                for each in ["level_number", "size", "level_name"]:
+                    if each not in config[key]:
+                        print(f"Error: missing required key in\
+config['level']: {each}")
+                        return False
+        return True

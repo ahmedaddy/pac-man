@@ -1,6 +1,5 @@
 import pygame
 
-from .config import config
 from .pacman import Pacman
 from .ghost import Ghosts
 from .components import Button, Notification
@@ -20,30 +19,32 @@ class Cell:
 
 
 class Pacgum:
-    def __init__(self, x, y, size, score=10):
+    def __init__(self, x, y, size, score, config):
         self.x = x
         self.y = y
         self.score = score
         self.is_eaten = False
         self.size = size
+        self.config = config
 
     def draw(self, screen, offset_x, offset_y):
         if not self.is_eaten:
-            pygame.draw.circle(screen, config.ORANGE, (self.x + offset_x, self.y + offset_y), self.size)
+            pygame.draw.circle(screen, self.config.ORANGE, (self.x + offset_x, self.y + offset_y), self.size)
 
 
 class GameEngine:
-    def __init__(self, levels):
+    def __init__(self, config, levels):
         """Initialize the game."""
         pygame.init()
         pygame.display.set_caption("PAC MAN")
-        self.screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
+        self.config = config
+        self.screen = pygame.display.set_mode((self.config.WIDTH, self.config.HEIGHT))
         self.clock = pygame.time.Clock()
         self.running = True
 
-        self.menu = Mainmenu(self.screen)
+        self.menu = Mainmenu(self.screen, self.config)
         self.level = 1
-        self.score_recorder = ScoreRecorder(self.screen)
+        self.score_recorder = ScoreRecorder(self.screen, self.config)
         self.state = "menu"
         self.levels = levels
         self.pause = False
@@ -63,10 +64,10 @@ class GameEngine:
             [Cell(cell) for cell in row]
             for row in map_data
         ]
-        self.maze_width = len(self.map[0]) * config.CELL_SIZE
-        self.maze_height = len(self.map) * config.CELL_SIZE
-        self.offset_x = (config.WIDTH - self.maze_width) // 2
-        self.offset_y = (config.HEIGHT - self.maze_height) // 2
+        self.maze_width = len(self.map[0]) * self.config.CELL_SIZE
+        self.maze_height = len(self.map) * self.config.CELL_SIZE
+        self.offset_x = (self.config.WIDTH - self.maze_width) // 2
+        self.offset_y = (self.config.HEIGHT - self.maze_height) // 2
         self.corners = [
             self.corrdinates_to_pixels(0, 0),
             self.corrdinates_to_pixels(len(self.map[0]) - 1, 0),
@@ -82,7 +83,8 @@ class GameEngine:
             self.pacman_starts_positions[0],
             self.pacman_starts_positions[1],
             self.map,
-            config.YELLOW,
+            self.config.YELLOW,
+            self.config
         )
         self.pacman.pacman_starts_positions = (
             self.pacman_starts_positions[0],
@@ -91,10 +93,10 @@ class GameEngine:
         self.pacman.score = saved_score
         self.pacman.lives = saved_lives
         self.ghosts = [
-            Ghosts(1, 0, self.map, self.pacman, 2, config.RED, self),
-            Ghosts(len(self.map) - 1, 1, self.map, self.pacman, 2, config.PINK, self),
-            Ghosts(1, len(self.map[0]) - 1, self.map, self.pacman, 2, config.ORANGE, self),
-            Ghosts(len(self.map) - 2, len(self.map[0]) - 1, self.map, self.pacman, 1, config.CYAN, self)
+            Ghosts(1, 0, self.map, self.pacman, 2, self.config.RED, self, self.config),
+            Ghosts(len(self.map) - 1, 1, self.map, self.pacman, 2, self.config.PINK, self, self.config),
+            Ghosts(1, len(self.map[0]) - 1, self.map, self.pacman, 2, self.config.ORANGE, self, self.config),
+            Ghosts(len(self.map) - 2, len(self.map[0]) - 1, self.map, self.pacman, 1, self.config.CYAN, self, self.config)
         ]
         assets = Path(__file__).resolve().parent / "assets"
         self.pacman.set_sprite(assets / "pac_man.png")
@@ -118,15 +120,15 @@ class GameEngine:
         self.super_gum_timer = None
         self.start_time = pygame.time.get_ticks()
         self.resume_button = Button(
-            config.WIDTH // 2 - 140 // 2,
-            config.HEIGHT // 2 - 40 // 2 + 25,
+            self.config.WIDTH // 2 - 140 // 2,
+            self.config.HEIGHT // 2 - 40 // 2 + 25,
             140, 40,
             "Resume", "black", "red", "white"
         )
 
         self.quit_button = Button(
-            config.WIDTH // 2 - 140 // 2,
-            config.HEIGHT // 2 - 40 // 2 + 75,
+            self.config.WIDTH // 2 - 140 // 2,
+            self.config.HEIGHT // 2 - 40 // 2 + 75,
             140, 40,
             "Quit", "black", "red", "white"
         )
@@ -148,7 +150,7 @@ class GameEngine:
         self.state = "game"
 
     def time_remaining(self):
-        limit = config.LEVEL_TIMER
+        limit = self.config.LEVEL_TIMER
         elapsed = pygame.time.get_ticks() - self.start_time
         return max(0, limit - elapsed // 1000)
 
@@ -166,9 +168,9 @@ class GameEngine:
                 elif self.state == "game":
                     self.screen.fill("#001219")
                     if self.cheat.flags["increase_speed"]:
-                        self.pacman.speed = config.PLAYER_SPEED * 4
+                        self.pacman.speed = self.config.PLAYER_SPEED * 4
                     else:
-                        self.pacman.speed = config.PLAYER_SPEED
+                        self.pacman.speed = self.config.PLAYER_SPEED
                     self.pacman.move()
                     if not self.gums_state:
                         for gum in self.gums:
@@ -213,8 +215,8 @@ class GameEngine:
             else:
                 self.screen.fill("#001219")
                 pause_text = Button(
-                    config.WIDTH // 2 - 40,
-                    config.HEIGHT // 2 - 70,
+                    self.config.WIDTH // 2 - 40,
+                    self.config.HEIGHT // 2 - 70,
                     80, 20,
                     "Game Paused", "black", "black", "white"
                 )
@@ -271,68 +273,68 @@ class GameEngine:
     def handle_game_event(self, event):
         if event.type == pygame.KEYDOWN:
             directions = {
-                pygame.K_UP: config.UP,
-                pygame.K_DOWN: config.DOWN,
-                pygame.K_LEFT: config.LEFT,
-                pygame.K_RIGHT: config.RIGHT,
+                pygame.K_UP: self.config.UP,
+                pygame.K_DOWN: self.config.DOWN,
+                pygame.K_LEFT: self.config.LEFT,
+                pygame.K_RIGHT: self.config.RIGHT,
             }
             if event.key in directions:
                 self.pacman.set_direction(directions[event.key])
 
     def corrdinates_to_pixels(self, x, y):
-        ret_x = (x * config.CELL_SIZE) + config.CELL_SIZE // 2
-        ret_y = (y * config.CELL_SIZE) + config.CELL_SIZE // 2
+        ret_x = (x * self.config.CELL_SIZE) + self.config.CELL_SIZE // 2
+        ret_y = (y * self.config.CELL_SIZE) + self.config.CELL_SIZE // 2
         return ret_x, ret_y
 
     def draw_walls(self):
         """Draw the maze walls."""
         for row, cells in enumerate(self.map):
             for col, cell in enumerate(cells):
-                x = self.offset_x + col * config.CELL_SIZE
-                y = self.offset_y + row * config.CELL_SIZE
+                x = self.offset_x + col * self.config.CELL_SIZE
+                y = self.offset_y + row * self.config.CELL_SIZE
                 if cell.up:
                     pygame.draw.line(
                         self.screen,
-                        config.DARK_BLUE,
+                        self.config.DARK_BLUE,
                         (x, y),
-                        (x + config.CELL_SIZE, y),
+                        (x + self.config.CELL_SIZE, y),
                         5
                     )
                 if cell.right:
                     pygame.draw.line(
                         self.screen,
-                        config.DARK_BLUE,
-                        (x + config.CELL_SIZE, y),
-                        (x + config.CELL_SIZE, y + config.CELL_SIZE),
+                        self.config.DARK_BLUE,
+                        (x + self.config.CELL_SIZE, y),
+                        (x + self.config.CELL_SIZE, y + self.config.CELL_SIZE),
                         5
                     )
                 if cell.down:
                     pygame.draw.line(
                         self.screen,
-                        config.DARK_BLUE,
-                        (x, y + config.CELL_SIZE),
-                        (x + config.CELL_SIZE, y + config.CELL_SIZE),
+                        self.config.DARK_BLUE,
+                        (x, y + self.config.CELL_SIZE),
+                        (x + self.config.CELL_SIZE, y + self.config.CELL_SIZE),
                         5
                     )
 
                 if cell.left:
                     pygame.draw.line(
                         self.screen,
-                        config.DARK_BLUE,
+                        self.config.DARK_BLUE,
                         (x, y),
-                        (x, y + config.CELL_SIZE),
+                        (x, y + self.config.CELL_SIZE),
                         5
                     )
 
     def infos(self):
         infos = []
-        score = Button(config.WIDTH // 2, 0, 40, 20, f"Score: {self.pacman.score}", "black", "black", "white")
+        score = Button(self.config.WIDTH // 2, 0, 40, 20, f"Score: {self.pacman.score}", "black", "black", "white")
         infos.append(score)
-        lives = Button(config.WIDTH // 2 + 120, 0, 40, 20, f"lives: {self.pacman.lives}", "black", "black", "white")
+        lives = Button(self.config.WIDTH // 2 + 120, 0, 40, 20, f"lives: {self.pacman.lives}", "black", "black", "white")
         infos.append(lives)
-        levels = Button(config.WIDTH // 2 - 120, 0, 40, 20, f"Level: {self.level}", "black", "black", "white")
+        levels = Button(self.config.WIDTH // 2 - 120, 0, 40, 20, f"Level: {self.level}", "black", "black", "white")
         infos.append(levels)
-        timer = Button(config.WIDTH // 2 - 240, 0, 40, 20, f"Time: {self.time_remaining()}", "black", "black", "white")
+        timer = Button(self.config.WIDTH // 2 - 240, 0, 40, 20, f"Time: {self.time_remaining()}", "black", "black", "white")
         infos.append(timer)
         return infos
 
@@ -351,16 +353,16 @@ in all valid positions.")
         chose_positions = random.sample(valid_positions, min(
             number_of_gums, len(valid_positions)))
         for pos in chose_positions:
-            gum_x = (pos[0] * config.CELL_SIZE) + config.CELL_SIZE // 2
-            gum_y = (pos[1] * config.CELL_SIZE) + config.CELL_SIZE // 2
-            pac_gums.append(Pacgum(gum_x, gum_y, config.GUM_SIZE, 10))
+            gum_x = (pos[0] * self.config.CELL_SIZE) + self.config.CELL_SIZE // 2
+            gum_y = (pos[1] * self.config.CELL_SIZE) + self.config.CELL_SIZE // 2
+            pac_gums.append(Pacgum(gum_x, gum_y, self.config.GUM_SIZE, self.config.POINTS_PER_GUM, self.config))
         return pac_gums
 
     def generate_supergums(self):
         super_pacgums = []
         for corner in self.corners:
             super_pacgums.append(
-                Pacgum(corner[0], corner[1], config.SUPER_GUM_SIZE, 50))
+                Pacgum(corner[0], corner[1], self.config.SUPER_GUM_SIZE, self.config.POINTS_PER_SUPER_GUM, config=self.config))
         return super_pacgums
 
     def handle_gums(self):
@@ -371,18 +373,18 @@ in all valid positions.")
                 pac_man_rect = pygame.Rect(
                     self.pacman.x,
                     self.pacman.y,
-                    config.CELL_SIZE,
-                    config.CELL_SIZE
+                    self.config.CELL_SIZE,
+                    self.config.CELL_SIZE
                 )
                 gum_rect = pygame.Rect(
-                    gum.x - config.GUM_SIZE // 2,
-                    gum.y - config.GUM_SIZE // 2,
-                    config.GUM_SIZE,
-                    config.GUM_SIZE
+                    gum.x - self.config.GUM_SIZE // 2,
+                    gum.y - self.config.GUM_SIZE // 2,
+                    self.config.GUM_SIZE,
+                    self.config.GUM_SIZE
                 )
                 if gum_rect.colliderect(pac_man_rect):
                     gum.is_eaten = True
-                    self.pacman.score += 5
+                    self.pacman.score += gum.score
         if all_done == 0:
             self.gums_state = True
 
@@ -392,21 +394,21 @@ in all valid positions.")
                 pac_man_rect = pygame.Rect(
                     self.pacman.x,
                     self.pacman.y,
-                    config.CELL_SIZE,
-                    config.CELL_SIZE
+                    self.config.CELL_SIZE,
+                    self.config.CELL_SIZE
                 )
                 gum_rect = pygame.Rect(
-                    gum.x - config.GUM_SIZE,
-                    gum.y - config.GUM_SIZE,
-                    config.GUM_SIZE,
-                    config.GUM_SIZE
+                    gum.x - self.config.GUM_SIZE // 2,
+                    gum.y - self.config.GUM_SIZE // 2,
+                    self.config.GUM_SIZE,
+                    self.config.GUM_SIZE
                 )
                 if gum_rect.colliderect(pac_man_rect):
                     gum.is_eaten = True
-                    self.pacman.score += 10
+                    self.pacman.score += gum.score
                     for ghost in self.ghosts:
                         ghost.edible = True
-                        self.remaining_supergum_effect = config.SUPER_GUM_DURATION
+                        self.remaining_supergum_effect = self.config.SUPER_GUM_DURATION
                     self.super_gum_timer = pygame.time.get_ticks()
 
     def update_super_gum_timer(self):

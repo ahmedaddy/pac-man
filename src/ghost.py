@@ -1,6 +1,5 @@
 import pygame
 from .pacman import Player, Pacman
-from .config import config
 from collections import deque
 import random
 # row y, column x.
@@ -8,9 +7,10 @@ import random
 
 class Ghosts(Player):
     def __init__(
-        self, row, col, map_data, Pacman: Pacman, speed, color, GameEngine
+        self, row, col, map_data, Pacman: Pacman, speed, color, GameEngine,
+        config
             ):
-        super().__init__(row, col, map_data, color)
+        super().__init__(row, col, map_data, color, config)
         self.Pacman = Pacman
         self.GameEngine = GameEngine
         self.start_position = [row, col]
@@ -70,13 +70,13 @@ class Ghosts(Player):
                 row_c, col_c = path[0]
                 row_n, col_n = path[1]
                 if row_c < row_n:
-                    direction = config.DOWN
+                    direction = self.config.DOWN
                 elif row_c > row_n:
-                    direction = config.UP
+                    direction = self.config.UP
                 elif col_c < col_n:
-                    direction = config.RIGHT
+                    direction = self.config.RIGHT
                 else:
-                    direction = config.LEFT
+                    direction = self.config.LEFT
 
         else:
             direction = self.move_random_direction()
@@ -100,41 +100,41 @@ class Ghosts(Player):
     def move_random_direction(self):
         directions = [self.direction]
         if self.is_aligned():
-            if self.can_move(config.UP) and self.direction != config.DOWN:
-                directions.append(config.UP)
-            if self.can_move(config.DOWN) and self.direction != config.UP:
-                directions.append(config.DOWN)
-            if self.can_move(config.LEFT) and self.direction != config.RIGHT:
-                directions.append(config.LEFT)
-            if self.can_move(config.RIGHT) and self.direction != config.LEFT:
-                directions.append(config.RIGHT)
+            if self.can_move(self.config.UP) and self.direction != self.config.DOWN:
+                directions.append(self.config.UP)
+            if self.can_move(self.config.DOWN) and self.direction != self.config.UP:
+                directions.append(self.config.DOWN)
+            if self.can_move(self.config.LEFT) and self.direction != self.config.RIGHT:
+                directions.append(self.config.LEFT)
+            if self.can_move(self.config.RIGHT) and self.direction != self.config.LEFT:
+                directions.append(self.config.RIGHT)
         self.direction = random.choice(directions)
         self.move()
 
     def open_way(self, direction, position):
         row, col = position
         cell = self.map[row][col]
-        if direction == config.UP:
+        if direction == self.config.UP:
             return row > 0 and not cell.up
-        if direction == config.DOWN:
+        if direction == self.config.DOWN:
             return row < len(self.map) - 1 and not cell.down
-        if direction == config.LEFT:
+        if direction == self.config.LEFT:
             return col > 0 and not cell.left
-        if direction == config.RIGHT:
+        if direction == self.config.RIGHT:
             return col < len(self.map[0]) - 1 and not cell.right
         return False
 
     def get_neighbors(self, current_position: tuple[int, int]):
         neighbors = []
-        directions = [config.RIGHT, config.LEFT, config.DOWN, config.UP]
+        directions = [self.config.RIGHT, self.config.LEFT, self.config.DOWN, self.config.UP]
         row, col = current_position
         for direction in directions:
             if self.open_way(direction, current_position):
-                if direction == config.UP:
+                if direction == self.config.UP:
                     position = (row - 1, col)
-                elif direction == config.DOWN:
+                elif direction == self.config.DOWN:
                     position = (row + 1, col)
-                elif direction == config.LEFT:
+                elif direction == self.config.LEFT:
                     position = (row, col - 1)
                 else:
                     position = (row, col + 1)
@@ -192,34 +192,34 @@ class Ghosts(Player):
         return distances
 
     def reset_ghost_position(self):
-        self.x = self.start_position[1] * config.CELL_SIZE
-        self.y = self.start_position[0] * config.CELL_SIZE
+        self.x = self.start_position[1] * self.config.CELL_SIZE
+        self.y = self.start_position[0] * self.config.CELL_SIZE
 
     def ghost_in_edible(self):
         pac_man_rect = pygame.Rect(
                     self.Pacman.x,
                     self.Pacman.y,
-                    config.CELL_SIZE,
-                    config.CELL_SIZE
+                    self.config.CELL_SIZE,
+                    self.config.CELL_SIZE
                 )
         # for ghost in self.GameEngine.ghosts:
         ghost_rect = pygame.Rect(
             self.x,
             self.y,
-            config.CELL_SIZE,
-            config.CELL_SIZE
+            self.config.CELL_SIZE,
+            self.config.CELL_SIZE
         )
         if ghost_rect.colliderect(pac_man_rect):
             if self.edible:
                 self.is_eaten = True
-                self.Pacman.score += 20
+                self.Pacman.score += self.config.POINTS_PER_GHOST
                 self.reset_ghost_position()
             elif not self.GameEngine.cheat.flags["invincibility"]:
                 self.Pacman.lose_life()
 
     def load_ghosts_image(self, normal_image_path, edible_path, waiting_path):
 
-        size = config.BALL_SIZE * 2
+        size = self.config.BALL_SIZE * 2
         try:
             normal = pygame.image.load(
                 str(normal_image_path)
@@ -261,8 +261,8 @@ class Ghosts(Player):
         #     super().draw(screen, offset_x, offset_y)
         #     return
 
-        center_x = offset_x + self.x + config.CELL_SIZE // 2
-        center_y = offset_y + self.y + config.CELL_SIZE // 2
+        center_x = offset_x + self.x + self.config.CELL_SIZE // 2
+        center_y = offset_y + self.y + self.config.CELL_SIZE // 2
 
         sprite_rect = sprite.get_rect(
             center=(center_x, center_y)

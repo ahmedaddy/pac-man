@@ -1,23 +1,23 @@
 import pygame
 from .components import Input, Button, Notification
-from .config import config
 import json
 from pathlib import Path
 
 
 class ScoreRecorder:
-    def __init__(self, screen):
+    def __init__(self, screen, config):
         # pygame.init()
         pygame.display.set_caption("Record Score --- Pac-Man")
         self.screen = screen
-        self.input = Input((config.WIDTH // 2) - 200 / 2, (config.HEIGHT // 2) - 50 / 2, 200, 50)
+        self.config = config
+        self.input = Input((self.config.WIDTH // 2) - 200 / 2, (self.config.HEIGHT // 2) - 50 / 2, 200, 50)
         self.font = pygame.font.SysFont(None, 32)
-        self.submit_button = Button((config.WIDTH // 2) - 100 / 2, (config.HEIGHT // 2) - 50 / 2 + 100, 100, 50, "Submit", "blue", "lightblue", "white")
+        self.submit_button = Button((self.config.WIDTH // 2) - 100 / 2, (self.config.HEIGHT // 2) - 50 / 2 + 100, 100, 50, "Submit", "blue", "lightblue", "white")
         self.notification = None
 
     def draw(self, score):
         self.screen.fill("#001219")
-        text_backgound_rect = pygame.draw.rect(self.screen, "white", ((config.WIDTH // 2) - 200 / 2, (config.HEIGHT // 2) - 50 / 2 - 100, 200, 50))
+        text_backgound_rect = pygame.draw.rect(self.screen, "white", ((self.config.WIDTH // 2) - 200 / 2, (self.config.HEIGHT // 2) - 50 / 2 - 100, 200, 50))
         text_surface = self.font.render(f"Your Score is {score}", True, "black")
         text_rect = text_surface.get_rect(center=text_backgound_rect.center)
         self.screen.blit(text_surface, text_rect)
@@ -26,12 +26,11 @@ class ScoreRecorder:
         if self.notification:
             self.notification.draw(self.screen)
 
-
     def handle_event(self, event, score):
         if self.submit_button.handle_button_events(event):
             player_name = self.input.text
             if player_name:
-                score_file = Path("high_scores.json")
+                score_file = Path(self.config.HIGH_SCORE_FILENAME)
                 try:
                     with score_file.open("r", encoding="utf-8") as f:
                         high_scores = json.load(f)

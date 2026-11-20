@@ -66,6 +66,6 @@ class Input:
 class Notification:
     def __init__(self, text, base_color, hover_color, text_color):
         self.pop_up = Button(175, 10, 150, 30, text, base_color, hover_color, text_color)
-    
+
     def draw(self, screen):
         self.pop_up.draw(screen)

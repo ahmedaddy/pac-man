@@ -1,12 +1,13 @@
 from mazegenerator import MazeGenerator
+from .config import Config
 from .game import GameEngine
-from .config import config
 from .cli import CLI
+from .utils import Utils
 
 
 def create_levels():
     levels = []
-    for settings in config.LEVEL_SETTINGS:
+    for settings in Config.LEVEL_SETTINGS:
         maze = MazeGenerator(
             size=(settings['size']),
             perfect=False,
@@ -21,20 +22,18 @@ def create_levels():
 
 class Main:
     def run(self):
-        # try:
         cli_command = CLI()
         cli_command.load_json_file()
         config_dict = cli_command.config_dict
-        for key in config_dict:
-            key = key.upper()
-        # config = config(**config_dict)
+        if not Utils.check_config(config_dict):
+            return
+        config_dict = {
+            key.upper(): value for key, value in config_dict.items()}
+        config = Config()
+        config.load_config(config_dict)
         levels = create_levels()
-        # print(levels[0])
-        game = GameEngine(levels)
+        game = GameEngine(config, levels)
         game.gameLoop()
-        # except Exception as e:
-        #     print(f"An error occurred: {e}", file=sys.stderr)
-        #     sys.exit(1)
 
 
 if __name__ == "__main__":

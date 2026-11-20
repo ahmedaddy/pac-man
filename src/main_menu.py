@@ -1,16 +1,13 @@
 import pygame
-from .config import config
 from .utils import Utils
-
-height = config.HEIGHT
-width = config.WIDTH
 
 
 class Mainmenu:
-    def __init__(self, screen):
+    def __init__(self, screen, config):
         # pygame.init()
         pygame.display.set_caption("Pac-man menu")
         self.screen = screen
+        self.config = config
         self.background = pygame.image.load(
             "src/assets/home_pacman.png"
         ).convert()
@@ -67,7 +64,7 @@ class Mainmenu:
             140,
             45
         )
-        self.scores = Utils.read_json_file("./high_scores.json")
+        self.scores = Utils.read_json_file(self.config.HIGH_SCORE_FILENAME)
         self.font = pygame.font.SysFont(None, 36)
 
     def draw(self):
@@ -108,7 +105,7 @@ class Mainmenu:
 
                 if self.highscores_rect.collidepoint(event.pos):
                     self.scores = (
-                        Utils.read_json_file("./high_scores.json")
+                        Utils.read_json_file(self.config.HIGH_SCORE_FILENAME)
                         or {"scores": []}
                     )
                     self.page = "highscores"
@@ -136,7 +133,7 @@ class Mainmenu:
         title = title_font.render(
             title,
             True,
-            config.YELLOW
+            self.config.YELLOW
         )
 
         title_rect = title.get_rect(
@@ -147,14 +144,14 @@ class Mainmenu:
 
         pygame.draw.rect(
             self.screen,
-            config.DARK_BLUE,
+            self.config.DARK_BLUE,
             self.back_rect,
             border_radius=8
         )
 
         pygame.draw.rect(
             self.screen,
-            config.YELLOW,
+            self.config.YELLOW,
             self.back_rect,
             width=2,
             border_radius=8
@@ -163,7 +160,7 @@ class Mainmenu:
         back_text = self.font.render(
             "BACK",
             True,
-            config.YELLOW
+            self.config.YELLOW
         )
 
         self.screen.blit(
@@ -192,13 +189,13 @@ class Mainmenu:
             empty_text = self.font.render(
                 "No highscores yet!",
                 True,
-                config.CYAN
+                self.config.CYAN
             )
 
             self.screen.blit(
                 empty_text,
                 empty_text.get_rect(
-                    center=(width // 2, height // 2)
+                    center=(self.config.WIDTH // 2, self.config.HEIGHT // 2)
                 )
             )
 
@@ -212,11 +209,11 @@ class Mainmenu:
             text_surface = self.font.render(
                 text,
                 True,
-                config.CYAN
+                self.config.CYAN
             )
 
             text_rect = text_surface.get_rect(
-                center=(width // 2, 140 + i * 35)
+                center=(self.config.WIDTH // 2, 140 + i * 35)
             )
 
             self.screen.blit(text_surface, text_rect)
