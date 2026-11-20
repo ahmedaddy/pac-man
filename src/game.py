@@ -340,13 +340,17 @@ class GameEngine:
         params:
         - event: The Pygame event to handle.
         returns: None
-        """
+        # """
         if event.type == pygame.KEYDOWN:
             directions = {
                 pygame.K_UP: config.UP,
                 pygame.K_DOWN: config.DOWN,
                 pygame.K_LEFT: config.LEFT,
                 pygame.K_RIGHT: config.RIGHT,
+                pygame.K_w: config.UP,
+                pygame.K_s: config.DOWN,
+                pygame.K_a: config.LEFT,
+                pygame.K_d: config.RIGHT
             }
             if event.key in directions:
                 self.pacman.set_direction(directions[event.key])
