@@ -5,7 +5,12 @@ from .cli import CLI
 from .utils import Utils
 
 
-def create_levels():
+def create_levels() -> list:
+    """
+    Create levels for the game based on the configuration settings.
+    returns:
+        list: A list of generated levels.
+    """
     levels = []
     for settings in Config.LEVEL_SETTINGS:
         maze = MazeGenerator(
@@ -21,7 +26,9 @@ def create_levels():
 
 
 class Main:
-    def run(self):
+
+    def run(self) -> None:
+        # try:
         cli_command = CLI()
         cli_command.load_json_file()
         config_dict = cli_command.config_dict
