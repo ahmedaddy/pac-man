@@ -565,7 +565,8 @@ in all valid positions.")
                     self.pacman.score += gum.score
                     for ghost in self.ghosts:
                         ghost.edible = True
-                        self.remaining_supergum_effect = self.config.SUPER_GUM_DURATION
+                        self.remaining_supergum_effect = (
+                            self.config.SUPER_GUM_DURATION)
 
                     self.super_gum_timer = pygame.time.get_ticks()
 
