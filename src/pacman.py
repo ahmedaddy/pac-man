@@ -1,7 +1,9 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING
 
-from .config import Config
-from .game import Cell
+if TYPE_CHECKING:
+    from .config import Config
+    from .game import Cell
 
 from .player import Player
 

@@ -1,8 +1,10 @@
 from __future__ import annotations
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-from .config import Config
-from .game import Cell, GameEngine
+if TYPE_CHECKING:
+    from .config import Config
+    from .game import Cell, GameEngine
 
 import pygame
 
