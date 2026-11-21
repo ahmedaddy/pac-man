@@ -226,6 +226,12 @@ class GameEngine:
         self.pacman.score = 0
         self.pacman.lives = 3
         self.load_level(self.levels[0])
+        self.cheat.flags = {
+            "invincibility": False,
+            "freeze": False,
+            "skip": False,
+            "increase_speed": False
+        }
         self.state = "game"
 
     def time_remaining(self) -> int:
