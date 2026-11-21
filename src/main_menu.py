@@ -166,17 +166,17 @@ class Mainmenu:
 
         title_font = pygame.font.SysFont(None, 50)
 
-        title = title_font.render(
+        title_surface = title_font.render(
             title,
             True,
             self.config.YELLOW
         )
 
-        title_rect = title.get_rect(
+        title_rect = title_surface.get_rect(
             center=(width // 2, 60)
         )
 
-        self.screen.blit(title, title_rect)
+        self.screen.blit(title_surface, title_rect)
 
         pygame.draw.rect(
             self.screen,

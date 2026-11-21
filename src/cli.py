@@ -1,14 +1,17 @@
+from __future__ import annotations
+from typing import Any
+
 import argparse
 import json
 
 
 class CLI():
-    def __init__(self):
-        self.parser = argparse.ArgumentParser(description="")
-        self.config_content = None
-        self.config_dict = None
+    def __init__(self) -> None:
+        self.parser = argparse.ArgumentParser()
+        self.config_content: str | None = None
+        self.config_dict: dict[str, Any] | None = None
 
-    def load_cli(self):
+    def load_cli(self) -> str:
         self.parser.add_argument(
             "config_file",
             type=str,
@@ -16,9 +19,9 @@ class CLI():
 
         arg = self.parser.parse_args()
 
-        return arg.config_file
+        return str(arg.config_file)
 
-    def load_json_file(self):
+    def load_json_file(self) -> None:
         config_path = self.load_cli()
 
         try:
@@ -40,10 +43,11 @@ class CLI():
         config_dict = json.loads(self.config_content)
         self.config_dict = config_dict
 
-    def remove_comment(self):
+    def remove_comment(self) -> None:
+        """Strip comment lines after load_json_file has populated the text."""
         clean_content = ""
 
-        for line in self.config_content.split('\n'):
+        for line in str(self.config_content).split('\n'):
             if line.lstrip().startswith('#'):
                 continue
 

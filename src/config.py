@@ -1,4 +1,14 @@
+from __future__ import annotations
+from typing import Any, ClassVar, TypedDict
+
 import dataclasses
+
+
+class LevelSettings(TypedDict):
+    """Describe a level's grid dimensions and generation seed."""
+
+    size: tuple[int, int]
+    seed: int
 
 
 @dataclasses.dataclass
@@ -28,7 +38,7 @@ class Config:
     GUM_SIZE: int = 5
     SUPER_GUM_SIZE: int = 10
     SUPER_GUM_DURATION: int = 5000
-    LEVEL_SETTINGS = [
+    LEVEL_SETTINGS: ClassVar[list[LevelSettings]] = [
         {"size": (15, 15), "seed": 42},
         {"size": (14, 17), "seed": 1},
         {"size": (11, 17), "seed": 1},
@@ -45,7 +55,7 @@ class Config:
     POINTS_PER_SUPER_GUM: int = 50
     POINTS_PER_GHOST: int = 200
 
-    def load_config(self, config_dict: dict):
+    def load_config(self, config_dict: dict[str, Any]) -> None:
         for key, value in config_dict.items():
             if hasattr(self, key):
                 setattr(self, key, value)

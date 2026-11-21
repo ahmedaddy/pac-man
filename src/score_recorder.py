@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from .config import Config
+
 import pygame
 from .components import Input, Button
 import json
@@ -8,7 +12,7 @@ class ScoreRecorder:
     """
     A class to handle the score recording functionality in the game.
     """
-    def __init__(self, screen: pygame.Surface, config) -> None:
+    def __init__(self, screen: pygame.Surface, config: Config) -> None:
         """
         Initialize the score recorder.
         """

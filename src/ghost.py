@@ -1,4 +1,8 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .game import Cell, GameEngine as EngineType
 
 from pathlib import Path
 
@@ -16,7 +20,7 @@ class Ghosts(Player):
     """Control ghost movement, pathfinding, collision state, and sprites."""
 
     def __init__(
-        self, row: int, col: int, map_data: list[list], Pacman: Pacman,
+        self, row: int, col: int, map_data: list[list[Cell]], Pacman: Pacman,
         speed: int, color: str, GameEngine: GameEngine,
         config: Config
             ) -> None:
@@ -35,7 +39,7 @@ class Ghosts(Player):
         """
         super().__init__(row, col, map_data, color, config)
         self.Pacman = Pacman
-        self.GameEngine: GameEngine = GameEngine
+        self.GameEngine: EngineType = GameEngine
         self.start_position: list[int] = [row, col]
         self.speed: int = speed
         self.edible: bool = False
@@ -108,7 +112,7 @@ class Ghosts(Player):
                     direction = self.config.LEFT
 
         else:
-            direction = self.move_random_direction()
+            self.move_random_direction()
             return
 
         self.direction = direction
@@ -370,9 +374,9 @@ class Ghosts(Player):
             offset_x: Horizontal rendering offset in pixels.
             offset_y: Vertical rendering offset in pixels.
         """
+        sprite: pygame.Surface | None = None
         if self.is_eaten:
             sprite = self.waiting_sprite
-
         elif self.edible:
             sprite = self.edible_sprite
         else:
@@ -385,8 +389,9 @@ class Ghosts(Player):
         center_x = offset_x + self.x + self.config.CELL_SIZE // 2
         center_y = offset_y + self.y + self.config.CELL_SIZE // 2
 
-        sprite_rect = sprite.get_rect(
-            center=(center_x, center_y)
-        )
+        if sprite:
+            sprite_rect = sprite.get_rect(
+                center=(center_x, center_y)
+            )
 
-        screen.blit(sprite, sprite_rect)
+            screen.blit(sprite, sprite_rect)

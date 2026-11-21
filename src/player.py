@@ -1,3 +1,9 @@
+from __future__ import annotations
+from pathlib import Path
+
+from .config import Config
+from .game import Cell, GameEngine
+
 import pygame
 
 
@@ -9,9 +15,9 @@ class Player:
             self,
             row: int,
             col: int,
-            map_data: list,
-            color: tuple,
-            config
+            map_data: list[list[Cell]],
+            color: str,
+            config: Config
             ) -> None:
         """
         Initialize the player with its position, map data, and color.
@@ -26,7 +32,7 @@ class Player:
         self.x = col * self.config.CELL_SIZE
         self.y = row * self.config.CELL_SIZE
         self.map = map_data
-        self.GameEngine = None
+        self.GameEngine: GameEngine | None = None
 
         self.speed = self.config.PLAYER_SPEED
         self.direction: str | None = None
@@ -45,7 +51,7 @@ class Player:
             and self.y % self.config.CELL_SIZE == 0
         )
 
-    def get_current_cell(self) -> tuple:
+    def get_current_cell(self) -> tuple[int, int, Cell]:
         """
         Get the current cell of the player based on its position.
         returns:
@@ -151,7 +157,7 @@ class Player:
         )
         screen.blit(sprite, sprite_rect)
 
-    def set_sprite(self, image_path: str) -> None:
+    def set_sprite(self, image_path: str | Path) -> None:
         """
         Set the sprite for the player.
         params:

@@ -1,3 +1,8 @@
+from __future__ import annotations
+
+from .config import Config
+from .game import Cell
+
 from .player import Player
 
 
@@ -10,9 +15,9 @@ class Pacman(Player):
             self,
             row: int,
             col: int,
-            map_data: list,
-            color: tuple,
-            config
+            map_data: list[list[Cell]],
+            color: str,
+            config: Config
             ) -> None:
         """
         Initialize the Pacman player.

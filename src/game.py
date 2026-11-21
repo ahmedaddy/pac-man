@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from .config import Config
+
 import pygame
 
 from .pacman import Pacman
@@ -35,7 +39,8 @@ class Pacgum:
     Represents a pacgum in the game, which can be eaten by Pacman.
     """
     def __init__(
-        self, x: int, y: int, size: int, score: int = 10, config=None
+        self, x: int, y: int, size: int, score: int = 10,
+        config: Config | None = None
             ) -> None:
         """
         Initialize the pacgum with its position, size, and score value.
@@ -63,7 +68,7 @@ class Pacgum:
         if not self.is_eaten:
 
             pygame.draw.circle(
-                screen, self.config.ORANGE,
+                screen, Config(self.config).ORANGE,
                 (self.x + offset_x, self.y + offset_y),
                 self.size
                 )
@@ -73,7 +78,7 @@ class GameEngine:
     """
     The main game engine that handles the game loop, events, and rendering.
     """
-    def __init__(self, config, levels: list) -> None:
+    def __init__(self, config: Config, levels: list[list[list[int]]]) -> None:
         """
         Initialize the game engine with the given levels.
         params:
@@ -100,11 +105,11 @@ class GameEngine:
 
         self.cheat = CheatMode(self.screen)
         self.stop_timer: int | None = None
-        self.remaining_supergum_effect = None
+        self.remaining_supergum_effect: int | None = None
         # 1 = Win, 2 = lose
         self.game_state = 1
 
-    def load_level(self, map_data: list) -> None:
+    def load_level(self, map_data: list[list[int]]) -> None:
         """
         Load the level from the given map data.
         params:

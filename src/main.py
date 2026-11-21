@@ -1,3 +1,5 @@
+from typing import Any
+
 from mazegenerator import MazeGenerator
 from .config import Config
 from .game import GameEngine
@@ -28,10 +30,9 @@ def create_levels() -> list:
 class Main:
 
     def run(self) -> None:
-        # try:
         cli_command = CLI()
         cli_command.load_json_file()
-        config_dict = cli_command.config_dict
+        config_dict: dict[str, Any] = cli_command.config_dict
         if not Utils.check_config(config_dict):
             return
         config_dict = {

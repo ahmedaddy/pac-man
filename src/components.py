@@ -6,8 +6,8 @@ class Button:
     A class representing a button in the game.
     """
     def __init__(
-            self, x: int,
-            y: int,
+            self, x: float,
+            y: float,
             width: int,
             height: int,
             text: str,
@@ -75,8 +75,8 @@ class Input:
     """
     def __init__(
             self,
-            x: int,
-            y: int,
+            x: float,
+            y: float,
             width: int,
             height: int
             ):
