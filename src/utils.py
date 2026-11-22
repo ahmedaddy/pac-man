@@ -32,7 +32,8 @@ path: {path}")
             "level_timer",
             "points_per_ghost",
             "points_per_super_gum",
-            "points_per_gum"
+            "points_per_gum",
+            "numbers_of_gums"
         ]
         print("Checking configuration...")
         for key in required_keys:

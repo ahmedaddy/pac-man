@@ -187,7 +187,7 @@ class GameEngine:
                 assets / waiting_name
                 )
 
-        self.gums = self.generate_pacgums(1)
+        self.gums = self.generate_pacgums(self.config.NUMBERS_OF_GUMS)
         self.super_gums = self.generate_supergums()
         self.gums_state = False
         self.super_gum_timer: int | None = None
@@ -215,6 +215,7 @@ class GameEngine:
             self.level = 1
         else:
             self.level += 1
+            self.config.NUMBERS_OF_GUMS += 5
             self.load_level(self.levels[self.level - 1])
         self.cheat.flags['skip'] = False
 

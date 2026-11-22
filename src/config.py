@@ -54,6 +54,7 @@ class Config:
     POINTS_PER_GUM: int = 10
     POINTS_PER_SUPER_GUM: int = 50
     POINTS_PER_GHOST: int = 200
+    NUMBERS_OF_GUMS: int = 0
 
     def load_config(self, config_dict: dict[str, Any]) -> None:
         for key, value in config_dict.items():

@@ -1,5 +1,5 @@
 PYTHON = python3
-MAIN = main
+MAIN = pac-man
 CONFIG_FILE = config.json
 
 install:

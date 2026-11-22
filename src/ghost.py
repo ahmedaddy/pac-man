@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .game import Cell, GameEngine as EngineType
+    from .game import Cell
 
 from pathlib import Path
 
@@ -39,7 +39,7 @@ class Ghosts(Player):
         """
         super().__init__(row, col, map_data, color, config)
         self.Pacman = Pacman
-        self.GameEngine: EngineType = GameEngine
+        self.GameEngine: GameEngine = GameEngine
         self.start_position: list[int] = [row, col]
         self.speed: int = speed
         self.edible: bool = False
