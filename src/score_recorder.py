@@ -27,6 +27,7 @@ class ScoreRecorder:
             (self.config.WIDTH // 2) - 100 / 2,
             (self.config.HEIGHT // 2) - 50 / 2 + 100, 100, 50,
             "Submit", "blue", "lightblue", "white")
+        self.error_message = ""
 
     def draw(self, score: int, state: int) -> None:
         """
@@ -69,6 +70,14 @@ class ScoreRecorder:
                     self.config.WIDTH // 2,
                     (self.config.HEIGHT // 2) - 50 / 2 - 150))
             self.screen.blit(win_surface, win_rect)
+        if self.error_message:
+            error_surface = self.font.render(
+                self.error_message, True, "red")
+            error_rect = error_surface.get_rect(
+                center=(
+                    self.config.WIDTH // 2,
+                    (self.config.HEIGHT // 2) - 50 / 2 + 200))
+            self.screen.blit(error_surface, error_rect)
 
     def handle_event(
             self,
@@ -93,10 +102,20 @@ class ScoreRecorder:
                         high_scores = json.load(f)
                 except (FileNotFoundError, json.JSONDecodeError):
                     high_scores = {"scores": []}
-
+                except Exception as e:
+                    print(f"Error reading high score file: {e}")
+                    high_scores = {"scores": []}
                 if (not isinstance(high_scores, dict) or
                         not isinstance(high_scores.get("scores"), list)):
                     high_scores = {"scores": []}
+                if player_name in [score["player_name"] for score in high_scores["scores"]]:
+                    self.error_message = "Name already exists. Please choose another."
+                    return None
+                if not isinstance(score, int):
+                    try:
+                        score = int(score)
+                    except ValueError:
+                        score = 0
                 if score < 0:
                     score = 0
                 high_scores["scores"].append(
@@ -110,13 +129,7 @@ class ScoreRecorder:
                 self.input.text = ""
                 return "menu"
             else:
-                dialog_surface = self.font.render(
-                    "Please enter a name before submitting.", True, "red")
-                dialog_rect = dialog_surface.get_rect(
-                    center=(
-                        self.config.WIDTH // 2,
-                        (self.config.HEIGHT // 2) - 50 / 2 + 200))
-                self.screen.blit(dialog_surface, dialog_rect)
+                self.error_message = "Please enter a name before submitting."
                 print("Please enter a name before submitting.")
         self.input.handle_event(event)
         return None
